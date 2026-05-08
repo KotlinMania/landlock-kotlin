@@ -64,7 +64,7 @@ and the [sandboxer example](https://github.com/landlock-lsm/rust-landlock/blob/H
 
 ```kotlin
 dependencies {
-    implementation("io.github.kotlinmania:landlock-kotlin:0.1.0-SNAPSHOT")
+    implementation("io.github.kotlinmania:landlock-kotlin:0.1.0")
 }
 ```
 
