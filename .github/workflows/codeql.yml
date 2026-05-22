@@ -17,7 +17,7 @@ name: "CodeQL Advanced"
 # for that language:
 #
 #   1. JDK + Gradle setup (the other two languages need no toolchain).
-#   2. A `./gradlew compileAndroidMain compileKotlinJs compileKotlinWasmJs`
+#   2. A `./gradlew setupAndroidSdk compileAndroidMain compileKotlinJs compileKotlinWasmJs`
 #      invocation under the CodeQL build tracer.
 #
 # This is a strict-KMP project with no JVM target, so the autobuild
@@ -35,7 +35,8 @@ name: "CodeQL Advanced"
 # plus `--no-configuration-cache --no-daemon` force a fresh traceable
 # `kotlinc` exec per compilation. That is why this file uses
 # `build-mode: manual` for java-kotlin even though autobuild is the
-# template default.
+# template default. This is a narrow traced extraction command, not the
+# repo's full Gradle build contract.
 
 on:
   schedule:
@@ -107,6 +108,7 @@ jobs:
         if: matrix.build-mode == 'manual'
         run: |
           ./gradlew \
+            setupAndroidSdk \
             compileAndroidMain \
             compileKotlinJs \
             compileKotlinWasmJs \
