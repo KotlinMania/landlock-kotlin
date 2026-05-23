@@ -209,7 +209,11 @@ kotlin {
         binaries.framework { baseName = "Landlock"; xcf.add(this) }
     }
     iosSimulatorArm64 {
-        binaries.framework { baseName = "Landlock"; xcf.add(this) }
+        binaries.framework {
+            baseName = "Landlock"
+            isStatic = true
+            xcf.add(this)
+        }
     }
     iosX64 {
         binaries.framework { baseName = "Landlock"; xcf.add(this) }
