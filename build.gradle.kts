@@ -331,6 +331,7 @@ rootProject.extensions.configure<WasmYarnRootEnvSpec>("kotlinWasmYarnSpec") {
 }
 
 rootProject.extensions.configure<YarnRootExtension>("kotlinYarn") {
+    yarnLockAutoReplace = true
     resolution("diff", "8.0.3")
     resolution("**/diff", "8.0.3")
     resolution("fast-uri", "3.1.2")
