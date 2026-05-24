@@ -1,35 +1,47 @@
 import XCTest
 import Landlock
 
-// Smoke test for the Kotlin → Swift Export → SPM → swift test pipeline.
-//
-// The file's mere existence and successful compilation prove three layers
-// of the pipeline:
-//
-//   1. `embedSwiftExportForXcode` produced `Landlock.swiftmodule/`
-//      and the supporting KotlinRuntimeSupport / ExportedKotlinPackages /
-//      KotlinRuntime swiftmodule bundles. If any of them were missing,
-//      `import Landlock` above would fail at compile time.
-//
-//   2. The static archive `libLandlock.a` (produced by the
-//      `linkSwiftExportBinaryDebugStaticMacosArm64` and
-//      `mergeMacosDebugSwiftExportLibraries` tasks) supplied every
-//      `__root____*` and `KotlinError`-related symbol the Swift modules
-//      reference. If the archive were missing or empty, this test
-//      executable would fail to link with "undefined symbols for
-//      architecture arm64".
-//
-//   3. The Kotlin `swiftExport { moduleName = "Landlock" }` and
-//      `flattenPackage = "io.github.kotlinmania.landlock"` configuration in
-//      build.gradle.kts produced a module name that's both syntactically
-//      valid as a Swift identifier and reachable from this Package.swift
-//      via the `LandlockLibrary` product.
-//
-// Add more meaningful per-API tests below as the Swift Export surface
-// grows. For now the import + a single passing assertion is the
-// canary that the pipeline is green for this repo.
 final class LandlockExportTests: XCTestCase {
-    func testSwiftModuleLoads() throws {
-        XCTAssertTrue(true, "Landlock swift module imported cleanly")
+    func testArchitectureConstantsMatchAgnosticBindings() throws {
+        XCTAssertEqual(uapi.LANDLOCK_ACCESS_FS_EXECUTE, uapi.i686.LANDLOCK_ACCESS_FS_EXECUTE)
+        XCTAssertEqual(uapi.LANDLOCK_ACCESS_NET_BIND_TCP, uapi.i686.LANDLOCK_ACCESS_NET_BIND_TCP)
+        XCTAssertEqual(uapi.LANDLOCK_ACCESS_FS_EXECUTE, uapi.x8664.LANDLOCK_ACCESS_FS_EXECUTE)
+        XCTAssertEqual(uapi.LANDLOCK_ACCESS_NET_BIND_TCP, uapi.x8664.LANDLOCK_ACCESS_NET_BIND_TCP)
+    }
+
+    func testI686LayoutMetadataMatchesBindgenTests() throws {
+        XCTAssertTrue(uapi.i686.bindgenTestLayoutLandlockRulesetAttr())
+        XCTAssertTrue(uapi.i686.bindgenTestLayoutLandlockPathBeneathAttr())
+        XCTAssertTrue(uapi.i686.bindgenTestLayoutLandlockNetPortAttr())
+
+        XCTAssertEqual(24, uapi.i686.LANDLOCK_RULESET_ATTR_SIZE_BYTES)
+        XCTAssertEqual(4, uapi.i686.LANDLOCK_RULESET_ATTR_ALIGNMENT_BYTES)
+        XCTAssertEqual(16, uapi.i686.LANDLOCK_RULESET_ATTR_SCOPED_OFFSET)
+
+        XCTAssertEqual(12, uapi.i686.LANDLOCK_PATH_BENEATH_ATTR_SIZE_BYTES)
+        XCTAssertEqual(1, uapi.i686.LANDLOCK_PATH_BENEATH_ATTR_ALIGNMENT_BYTES)
+        XCTAssertEqual(8, uapi.i686.LANDLOCK_PATH_BENEATH_ATTR_PARENT_FD_OFFSET)
+
+        XCTAssertEqual(16, uapi.i686.LANDLOCK_NET_PORT_ATTR_SIZE_BYTES)
+        XCTAssertEqual(4, uapi.i686.LANDLOCK_NET_PORT_ATTR_ALIGNMENT_BYTES)
+        XCTAssertEqual(8, uapi.i686.LANDLOCK_NET_PORT_ATTR_PORT_OFFSET)
+    }
+
+    func testX8664LayoutMetadataMatchesBindgenTests() throws {
+        XCTAssertTrue(uapi.x8664.bindgenTestLayoutLandlockRulesetAttr())
+        XCTAssertTrue(uapi.x8664.bindgenTestLayoutLandlockPathBeneathAttr())
+        XCTAssertTrue(uapi.x8664.bindgenTestLayoutLandlockNetPortAttr())
+
+        XCTAssertEqual(24, uapi.x8664.LANDLOCK_RULESET_ATTR_SIZE_BYTES)
+        XCTAssertEqual(8, uapi.x8664.LANDLOCK_RULESET_ATTR_ALIGNMENT_BYTES)
+        XCTAssertEqual(16, uapi.x8664.LANDLOCK_RULESET_ATTR_SCOPED_OFFSET)
+
+        XCTAssertEqual(12, uapi.x8664.LANDLOCK_PATH_BENEATH_ATTR_SIZE_BYTES)
+        XCTAssertEqual(1, uapi.x8664.LANDLOCK_PATH_BENEATH_ATTR_ALIGNMENT_BYTES)
+        XCTAssertEqual(8, uapi.x8664.LANDLOCK_PATH_BENEATH_ATTR_PARENT_FD_OFFSET)
+
+        XCTAssertEqual(16, uapi.x8664.LANDLOCK_NET_PORT_ATTR_SIZE_BYTES)
+        XCTAssertEqual(8, uapi.x8664.LANDLOCK_NET_PORT_ATTR_ALIGNMENT_BYTES)
+        XCTAssertEqual(8, uapi.x8664.LANDLOCK_NET_PORT_ATTR_PORT_OFFSET)
     }
 }
