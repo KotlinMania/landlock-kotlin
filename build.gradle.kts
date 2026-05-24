@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension
 
 plugins {
     kotlin("multiplatform") version "2.3.21"
@@ -209,10 +210,18 @@ kotlin {
         binaries.framework { baseName = "Landlock"; xcf.add(this) }
     }
     iosSimulatorArm64 {
-        binaries.framework { baseName = "Landlock"; xcf.add(this) }
+        binaries.framework {
+            baseName = "Landlock"
+            isStatic = true
+            xcf.add(this)
+        }
     }
     iosX64 {
-        binaries.framework { baseName = "Landlock"; xcf.add(this) }
+        binaries.framework {
+            baseName = "Landlock"
+            isStatic = true
+            xcf.add(this)
+        }
     }
 
     tvosArm64 {
@@ -331,6 +340,7 @@ rootProject.extensions.configure<WasmYarnRootEnvSpec>("kotlinWasmYarnSpec") {
 }
 
 rootProject.extensions.configure<YarnRootExtension>("kotlinYarn") {
+    yarnLockAutoReplace = true
     resolution("diff", "8.0.3")
     resolution("**/diff", "8.0.3")
     resolution("fast-uri", "3.1.2")
@@ -359,6 +369,10 @@ rootProject.extensions.configure<YarnRootExtension>("kotlinYarn") {
     resolution("**/socket.io-parser", "4.2.6")
     resolution("ws", "8.20.1")
     resolution("**/ws", "8.20.1")
+}
+
+rootProject.extensions.configure<WasmYarnRootExtension>("kotlinWasmYarn") {
+    yarnLockAutoReplace = true
 }
 
 
