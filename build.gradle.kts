@@ -5,6 +5,7 @@ import java.nio.file.StandardCopyOption
 import java.util.zip.ZipInputStream
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.ClasspathNormalizer
+import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -436,10 +437,40 @@ tasks.register("setupAndroidSdk") {
     }
 }
 
+val swiftExportOutputDir = layout.buildDirectory.dir("swift-test").get().asFile
+val buildSwiftExportPackage = tasks.register<Exec>("buildSwiftExportPackage") {
+    group = "verification"
+    description = "Builds the Swift Export SPM package with the same environment used by CI."
+    workingDir = layout.projectDirectory.asFile
+    commandLine(
+        layout.projectDirectory.file(if (isWindowsHost) "gradlew.bat" else "gradlew").asFile.absolutePath,
+        "embedSwiftExportForXcode",
+        "--no-daemon",
+        "--console=plain",
+        "--no-configuration-cache",
+    )
+    environment("BUILT_PRODUCTS_DIR", swiftExportOutputDir.absolutePath)
+    environment("TARGET_BUILD_DIR", swiftExportOutputDir.absolutePath)
+    environment("SDK_NAME", "macosx")
+    environment("CONFIGURATION", "Debug")
+    environment("ARCHS", "arm64")
+    environment("FRAMEWORKS_FOLDER_PATH", "Frameworks")
+    environment("MACOSX_DEPLOYMENT_TARGET", "14.0")
+    environment("DEPLOYMENT_TARGET_SETTING_NAME", "MACOSX_DEPLOYMENT_TARGET")
+}
+
+val swiftExportTest = tasks.register<Exec>("swiftExportTest") {
+    group = "verification"
+    description = "Runs swift test against the Kotlin-generated Swift Export package."
+    dependsOn(buildSwiftExportPackage)
+    workingDir = layout.projectDirectory.dir("swift-test-harness").asFile
+    commandLine("swift", "test")
+}
+
 tasks.register("test") {
     group = "verification"
     description =
-        "Runs the host-portable test suite (macOS + JS + WasmJS + Android unit). " +
+        "Runs the host-portable test suite plus the Swift Export smoke test. " +
         "Non-host native targets (mingwX64, linuxX64) only run on their own host."
 
     val defaultTestTasks = listOf(
@@ -452,6 +483,11 @@ tasks.register("test") {
     )
 
     dependsOn(defaultTestTasks.mapNotNull { taskName -> tasks.findByName(taskName) })
+    dependsOn(swiftExportTest)
+}
+
+tasks.named("check") {
+    dependsOn(swiftExportTest)
 }
 
 val fullTargetBuildTaskNames = setOf(
