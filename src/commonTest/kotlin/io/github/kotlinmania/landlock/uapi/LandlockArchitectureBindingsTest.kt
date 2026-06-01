@@ -1,7 +1,9 @@
-// port-lint: ignore
 // Verifies architecture-specific UAPI binding facts.
 package io.github.kotlinmania.landlock.uapi
 
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import io.github.kotlinmania.landlock.uapi.i686.LANDLOCK_ACCESS_FS_EXECUTE as I686_ACCESS_FS_EXECUTE
 import io.github.kotlinmania.landlock.uapi.i686.LANDLOCK_ACCESS_NET_BIND_TCP as I686_ACCESS_NET_BIND_TCP
 import io.github.kotlinmania.landlock.uapi.i686.LANDLOCK_NET_PORT_ATTR_ALIGNMENT_BYTES as I686_NET_PORT_ALIGNMENT
@@ -30,9 +32,6 @@ import io.github.kotlinmania.landlock.uapi.x8664.LANDLOCK_RULESET_ATTR_SIZE_BYTE
 import io.github.kotlinmania.landlock.uapi.x8664.bindgenTestLayoutLandlockNetPortAttr as x8664NetPortLayoutMatches
 import io.github.kotlinmania.landlock.uapi.x8664.bindgenTestLayoutLandlockPathBeneathAttr as x8664PathBeneathLayoutMatches
 import io.github.kotlinmania.landlock.uapi.x8664.bindgenTestLayoutLandlockRulesetAttr as x8664RulesetLayoutMatches
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class LandlockArchitectureBindingsTest {
     @Test
