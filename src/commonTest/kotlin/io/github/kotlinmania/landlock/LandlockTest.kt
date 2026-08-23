@@ -207,4 +207,130 @@ class LandlockTest {
         val status = ruleset2.restrictSelf().getOrThrow()
         assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
     }
+
+    @Test
+    fun testAllowRootCompat() {
+        val abi = ABI.V1
+        val status =
+            Ruleset
+                .from(abi)
+                .handleAccess(AccessFs.fromAll(abi))
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .addRule(PathBeneath(PathFd("/"), AccessFs.fromAll(abi)))
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+    }
+
+    @Test
+    fun testAllowRootFragile() {
+        val abi = ABI.V1
+        val status =
+            Ruleset
+                .from(abi)
+                .setCompatibility(CompatLevel.HardRequirement)
+                .handleAccess(AccessFs.Execute)
+                .getOrThrow()
+                .setCompatibility(CompatLevel.BestEffort)
+                .handleAccess(AccessFs.fromAll(abi))
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .setNoNewPrivs(true)
+                .addRule(PathBeneath(PathFd("/"), AccessFs.fromAll(abi)))
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+        assertTrue(status.noNewPrivs)
+    }
+
+    @Test
+    fun testAbiV2ExecRefer() {
+        val status =
+            Ruleset
+                .from(ABI.V2)
+                .handleAccess(AccessFs.Execute)
+                .getOrThrow()
+                .handleAccess(AccessFs.Refer)
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+    }
+
+    @Test
+    fun testAbiV3Truncate() {
+        val status =
+            Ruleset
+                .from(ABI.V3)
+                .handleAccess(AccessFs.Refer)
+                .getOrThrow()
+                .handleAccess(AccessFs.Truncate)
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .addRule(PathBeneath(PathFd("/"), AccessFs.Refer))
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+    }
+
+    @Test
+    fun testAbiV4Tcp() {
+        val status =
+            Ruleset
+                .from(ABI.V4)
+                .handleAccess(AccessFs.Truncate)
+                .getOrThrow()
+                .handleAccess(BitFlags.from(AccessNet.BindTcp, AccessNet.ConnectTcp))
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .addRule(NetPort(1u, AccessNet.ConnectTcp))
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+    }
+
+    @Test
+    fun testAbiV5IoctlDev() {
+        val status =
+            Ruleset
+                .from(ABI.V5)
+                .handleAccess(AccessNet.BindTcp)
+                .getOrThrow()
+                .handleAccess(AccessFs.IoctlDev)
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .addRule(PathBeneath(PathFd("/"), AccessFs.IoctlDev))
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+    }
+
+    @Test
+    fun testAbiV6ScopeMix() {
+        val status =
+            Ruleset
+                .from(ABI.V6)
+                .handleAccess(AccessFs.IoctlDev)
+                .getOrThrow()
+                .scope(BitFlags.from(Scope.AbstractUnixSocket, Scope.Signal))
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+    }
 }
