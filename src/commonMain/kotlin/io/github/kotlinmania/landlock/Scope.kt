@@ -15,9 +15,9 @@ enum class Scope(
     ;
 
     companion object {
-        val ALL: BitFlags<Scope> = BitFlags.from(AbstractUnixSocket, Signal)
+        val ALL: BitFlags = BitFlags.from(AbstractUnixSocket, Signal)
 
-        fun fromAll(abi: ABI): BitFlags<Scope> =
+        fun fromAll(abi: ABI): BitFlags =
             when (abi) {
                 ABI.Unsupported, ABI.V1, ABI.V2, ABI.V3, ABI.V4, ABI.V5 -> BitFlags.empty()
                 ABI.V6 -> ALL

@@ -62,8 +62,8 @@ sealed class CreateRulesetError(
     cause: Throwable? = null,
 ) : Exception(message, cause) {
     data class CreateRulesetCall(
-        val errno: Int,
-        val detailMessage: String = "failed to create a ruleset: errno $errno",
+        val rawErrno: Int,
+        val detailMessage: String = "failed to create a ruleset: errno $rawErrno",
     ) : CreateRulesetError(detailMessage)
 
     data object MissingHandledAccess : CreateRulesetError("missing access")
@@ -74,13 +74,13 @@ sealed class AddRuleError(
     cause: Throwable? = null,
 ) : Exception(message, cause) {
     data class AddRuleCall(
-        val errno: Int,
-        val detailMessage: String = "failed to add a rule: errno $errno",
+        val rawErrno: Int,
+        val detailMessage: String = "failed to add a rule: errno $rawErrno",
     ) : AddRuleError(detailMessage)
 
     data class UnhandledAccess(
-        val access: BitFlags<*>,
-        val incompatible: BitFlags<*>,
+        val access: BitFlags,
+        val incompatible: BitFlags,
     ) : AddRuleError("access-rights not handled by the ruleset: $incompatible")
 
     data class Compat(
@@ -119,13 +119,13 @@ sealed class PathBeneathError(
     cause: Throwable? = null,
 ) : Exception(message, cause) {
     data class StatCall(
-        val errno: Int,
-        val detailMessage: String = "failed to check file descriptor type: errno $errno",
+        val rawErrno: Int,
+        val detailMessage: String = "failed to check file descriptor type: errno $rawErrno",
     ) : PathBeneathError(detailMessage)
 
     data class DirectoryAccess(
-        val access: BitFlags<AccessFs>,
-        val incompatible: BitFlags<AccessFs>,
+        val access: BitFlags,
+        val incompatible: BitFlags,
     ) : PathBeneathError("incompatible directory-only access-rights: $incompatible")
 }
 
@@ -136,17 +136,17 @@ sealed class AccessError(
     data object Empty : AccessError("empty access-right")
 
     data class Unknown(
-        val access: BitFlags<*>,
-        val unknown: BitFlags<*>,
+        val access: BitFlags,
+        val unknown: BitFlags,
     ) : AccessError("unknown access-rights (at build time): $unknown")
 
     data class Incompatible(
-        val access: BitFlags<*>,
+        val access: BitFlags,
     ) : AccessError("fully incompatible access-rights: $access")
 
     data class PartiallyCompatible(
-        val access: BitFlags<*>,
-        val incompatible: BitFlags<*>,
+        val access: BitFlags,
+        val incompatible: BitFlags,
     ) : AccessError("partially incompatible access-rights: $incompatible")
 }
 
@@ -155,13 +155,13 @@ sealed class RestrictSelfError(
     cause: Throwable? = null,
 ) : Exception(message, cause) {
     data class SetNoNewPrivsCall(
-        val errno: Int,
-        val detailMessage: String = "failed to set no_new_privs: errno $errno",
+        val rawErrno: Int,
+        val detailMessage: String = "failed to set no_new_privs: errno $rawErrno",
     ) : RestrictSelfError(detailMessage)
 
     data class RestrictSelfCall(
-        val errno: Int,
-        val detailMessage: String = "failed to restrict the calling thread: errno $errno",
+        val rawErrno: Int,
+        val detailMessage: String = "failed to restrict the calling thread: errno $rawErrno",
     ) : RestrictSelfError(detailMessage)
 }
 
@@ -171,8 +171,8 @@ sealed class PathFdError(
 ) : Exception(message, cause) {
     data class OpenCall(
         val path: String,
-        val errno: Int,
-        val detailMessage: String = "failed to open \"$path\": errno $errno",
+        val rawErrno: Int,
+        val detailMessage: String = "failed to open \"$path\": errno $rawErrno",
     ) : PathFdError(detailMessage)
 }
 
@@ -189,12 +189,12 @@ data class Errno(
 
         fun from(error: Throwable): Errno =
             when (error) {
-                is CreateRulesetError.CreateRulesetCall -> Errno(error.errno)
-                is AddRuleError.AddRuleCall -> Errno(error.errno)
-                is RestrictSelfError.SetNoNewPrivsCall -> Errno(error.errno)
-                is RestrictSelfError.RestrictSelfCall -> Errno(error.errno)
-                is PathFdError.OpenCall -> Errno(error.errno)
-                is PathBeneathError.StatCall -> Errno(error.errno)
+                is CreateRulesetError.CreateRulesetCall -> Errno(error.rawErrno)
+                is AddRuleError.AddRuleCall -> Errno(error.rawErrno)
+                is RestrictSelfError.SetNoNewPrivsCall -> Errno(error.rawErrno)
+                is RestrictSelfError.RestrictSelfCall -> Errno(error.rawErrno)
+                is PathFdError.OpenCall -> Errno(error.rawErrno)
+                is PathBeneathError.StatCall -> Errno(error.rawErrno)
                 is RulesetError.CreateRuleset -> from(error.error)
                 is RulesetError.AddRules -> from(error.error)
                 is RulesetError.RestrictSelf -> from(error.error)
