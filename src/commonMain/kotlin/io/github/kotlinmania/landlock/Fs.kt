@@ -44,9 +44,9 @@ enum class AccessFs(
     ;
 
     companion object {
-        val ALL: BitFlags<AccessFs> = BitFlags.from(entries)
+        val ALL: BitFlags = BitFlags.from(entries)
 
-        fun fromAll(abi: ABI): BitFlags<AccessFs> =
+        fun fromAll(abi: ABI): BitFlags =
             when (abi) {
                 ABI.Unsupported -> BitFlags.empty()
                 ABI.V1 ->
@@ -70,13 +70,13 @@ enum class AccessFs(
                 ABI.V5, ABI.V6 -> fromAll(ABI.V3) or IoctlDev
             }
 
-        fun fromRead(abi: ABI): BitFlags<AccessFs> =
+        fun fromRead(abi: ABI): BitFlags =
             when (abi) {
                 ABI.Unsupported -> BitFlags.empty()
                 ABI.V1, ABI.V2, ABI.V3, ABI.V4, ABI.V5, ABI.V6 -> BitFlags.from(Execute, ReadFile, ReadDir)
             }
 
-        fun fromWrite(abi: ABI): BitFlags<AccessFs> =
+        fun fromWrite(abi: ABI): BitFlags =
             when (abi) {
                 ABI.Unsupported -> BitFlags.empty()
                 ABI.V1 ->
@@ -96,7 +96,7 @@ enum class AccessFs(
                 ABI.V3, ABI.V4, ABI.V5, ABI.V6 -> fromWrite(ABI.V2) or Truncate
             }
 
-        fun fromFile(abi: ABI): BitFlags<AccessFs> =
+        fun fromFile(abi: ABI): BitFlags =
             when (abi) {
                 ABI.Unsupported -> BitFlags.empty()
                 ABI.V1 -> BitFlags.from(Execute, WriteFile, ReadFile)
@@ -124,11 +124,11 @@ data class PathFd(
  */
 data class PathBeneath(
     val parent: PathFd,
-    var allowedAccess: BitFlags<AccessFs>,
+    var allowedAccess: BitFlags,
     var compatLevel: CompatLevel? = null,
 ) : Rule<AccessFs>,
     Compatible {
-    constructor(path: String, access: BitFlags<AccessFs>) : this(PathFd(path), access)
+    constructor(path: String, access: BitFlags) : this(PathFd(path), access)
     constructor(path: String, access: AccessFs) : this(PathFd(path), BitFlags.from(access))
     constructor(parent: PathFd, access: AccessFs) : this(parent, BitFlags.from(access))
 
@@ -166,7 +166,7 @@ data class PathBeneath(
  */
 fun pathBeneathRules(
     paths: Iterable<String>,
-    access: BitFlags<AccessFs>,
+    access: BitFlags,
 ): List<Result<PathBeneath>> =
     paths.map { path ->
         PathFd.open(path).map { fd -> PathBeneath(fd, access) }

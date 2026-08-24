@@ -39,7 +39,7 @@ class LandlockTest {
         assertTrue(combined.contains(exec))
         assertTrue(combined.contains(read))
         assertFalse(combined.isEmpty)
-        assertTrue(BitFlags.empty<AccessFs>().isEmpty)
+        assertTrue(BitFlags.empty().isEmpty)
 
         val diff = combined and !exec
         assertEquals(read, diff)
@@ -52,7 +52,7 @@ class LandlockTest {
         val ruleset =
             Ruleset
                 .from(ABI.V1)
-                .handleAccess(access)
+                .handleAccessFs(access)
                 .getOrThrow()
         assertEquals(access, ruleset.requestedHandledFs)
         assertEquals(access, ruleset.actualHandledFs)
@@ -77,7 +77,7 @@ class LandlockTest {
         val rulesetV3 =
             Ruleset
                 .from(ABI.V3)
-                .handleAccess(access)
+                .handleAccessNet(access)
                 .getOrThrow()
         assertEquals(access, rulesetV3.requestedHandledNet)
         assertEquals(BitFlags.empty(), rulesetV3.actualHandledNet)
@@ -85,7 +85,7 @@ class LandlockTest {
         val rulesetV4 =
             Ruleset
                 .from(ABI.V4)
-                .handleAccess(access)
+                .handleAccessNet(access)
                 .getOrThrow()
         assertEquals(access, rulesetV4.requestedHandledNet)
         assertEquals(access, rulesetV4.actualHandledNet)
@@ -121,11 +121,11 @@ class LandlockTest {
         val ruleset =
             Ruleset
                 .from(ABI.V6)
-                .handleAccess(accessFs)
+                .handleAccessFs(accessFs)
                 .getOrThrow()
                 .scope(scopes)
                 .getOrThrow()
-                .handleAccess(accessNet)
+                .handleAccessNet(accessNet)
                 .getOrThrow()
 
         assertEquals(accessFs, ruleset.requestedHandledFs)
@@ -214,7 +214,7 @@ class LandlockTest {
         val status =
             Ruleset
                 .from(abi)
-                .handleAccess(AccessFs.fromAll(abi))
+                .handleAccessFs(AccessFs.fromAll(abi))
                 .getOrThrow()
                 .create()
                 .getOrThrow()
@@ -235,7 +235,7 @@ class LandlockTest {
                 .handleAccess(AccessFs.Execute)
                 .getOrThrow()
                 .setCompatibility(CompatLevel.BestEffort)
-                .handleAccess(AccessFs.fromAll(abi))
+                .handleAccessFs(AccessFs.fromAll(abi))
                 .getOrThrow()
                 .create()
                 .getOrThrow()
@@ -289,7 +289,7 @@ class LandlockTest {
                 .from(ABI.V4)
                 .handleAccess(AccessFs.Truncate)
                 .getOrThrow()
-                .handleAccess(BitFlags.from(AccessNet.BindTcp, AccessNet.ConnectTcp))
+                .handleAccessNet(BitFlags.from(AccessNet.BindTcp, AccessNet.ConnectTcp))
                 .getOrThrow()
                 .create()
                 .getOrThrow()

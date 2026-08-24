@@ -16,9 +16,9 @@ enum class AccessNet(
     ;
 
     companion object {
-        val ALL: BitFlags<AccessNet> = BitFlags.from(BindTcp, ConnectTcp)
+        val ALL: BitFlags = BitFlags.from(BindTcp, ConnectTcp)
 
-        fun fromAll(abi: ABI): BitFlags<AccessNet> =
+        fun fromAll(abi: ABI): BitFlags =
             when (abi) {
                 ABI.Unsupported, ABI.V1, ABI.V2, ABI.V3 -> BitFlags.empty()
                 ABI.V4, ABI.V5, ABI.V6 -> ALL
@@ -31,11 +31,12 @@ enum class AccessNet(
  */
 data class NetPort(
     val port: UShort,
-    var allowedAccess: BitFlags<AccessNet>,
+    var allowedAccess: BitFlags,
     var compatLevel: CompatLevel? = null,
 ) : Rule<AccessNet>,
     Compatible {
     constructor(port: UShort, access: AccessNet) : this(port, BitFlags.from(access))
+    constructor(port: UShort, access: BitFlags) : this(port, access, null)
 
     override fun setCompatibility(level: CompatLevel): NetPort {
         this.compatLevel = level

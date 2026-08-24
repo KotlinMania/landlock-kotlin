@@ -18,8 +18,6 @@ package io.github.kotlinmania.landlock
  * limitations under the License.
  */
 
-import kotlin.jvm.JvmName
-
 /**
  * Enforcement status of a ruleset.
  */
@@ -59,12 +57,12 @@ interface Rule<T : HandledAccess> {
  * Landlock ruleset builder.
  */
 data class Ruleset(
-    var requestedHandledFs: BitFlags<AccessFs> = BitFlags.empty(),
-    var requestedHandledNet: BitFlags<AccessNet> = BitFlags.empty(),
-    var requestedScoped: BitFlags<Scope> = BitFlags.empty(),
-    var actualHandledFs: BitFlags<AccessFs> = BitFlags.empty(),
-    var actualHandledNet: BitFlags<AccessNet> = BitFlags.empty(),
-    var actualScoped: BitFlags<Scope> = BitFlags.empty(),
+    var requestedHandledFs: BitFlags = BitFlags.empty(),
+    var requestedHandledNet: BitFlags = BitFlags.empty(),
+    var requestedScoped: BitFlags = BitFlags.empty(),
+    var actualHandledFs: BitFlags = BitFlags.empty(),
+    var actualHandledNet: BitFlags = BitFlags.empty(),
+    var actualScoped: BitFlags = BitFlags.empty(),
     var compat: Compatibility = Compatibility(),
 ) : Compatible {
     override fun setCompatibility(level: CompatLevel): Ruleset {
@@ -72,10 +70,9 @@ data class Ruleset(
         return this
     }
 
-    fun handleAccess(access: AccessFs): Result<Ruleset> = handleAccess(BitFlags.from(access))
+    fun handleAccess(access: AccessFs): Result<Ruleset> = handleAccessFs(BitFlags.from(access))
 
-    @JvmName("handleAccessFs")
-    fun handleAccess(access: BitFlags<AccessFs>): Result<Ruleset> {
+    fun handleAccessFs(access: BitFlags): Result<Ruleset> {
         requestedHandledFs = requestedHandledFs or access
         val supported = AccessFs.fromAll(compat.abi())
         val compatFs = access and supported
@@ -120,10 +117,9 @@ data class Ruleset(
         return Result.success(this)
     }
 
-    fun handleAccess(access: AccessNet): Result<Ruleset> = handleAccess(BitFlags.from(access))
+    fun handleAccess(access: AccessNet): Result<Ruleset> = handleAccessNet(BitFlags.from(access))
 
-    @JvmName("handleAccessNet")
-    fun handleAccess(access: BitFlags<AccessNet>): Result<Ruleset> {
+    fun handleAccessNet(access: BitFlags): Result<Ruleset> {
         requestedHandledNet = requestedHandledNet or access
         val supported = AccessNet.fromAll(compat.abi())
         val compatNet = access and supported
@@ -170,7 +166,7 @@ data class Ruleset(
 
     fun scope(scope: Scope): Result<Ruleset> = scope(BitFlags.from(scope))
 
-    fun scope(scopes: BitFlags<Scope>): Result<Ruleset> {
+    fun scope(scopes: BitFlags): Result<Ruleset> {
         requestedScoped = requestedScoped or scopes
         val supported = Scope.fromAll(compat.abi())
         val compatScopes = scopes and supported
@@ -243,8 +239,8 @@ data class RulesetCreated(
     var noNewPrivs: Boolean = true,
     var fd: Int? = null,
 ) : Compatible {
-    val requestedHandledFs: BitFlags<AccessFs> get() = ruleset.requestedHandledFs
-    val requestedHandledNet: BitFlags<AccessNet> get() = ruleset.requestedHandledNet
+    val requestedHandledFs: BitFlags get() = ruleset.requestedHandledFs
+    val requestedHandledNet: BitFlags get() = ruleset.requestedHandledNet
     val compat: Compatibility get() = ruleset.compat
 
     override fun setCompatibility(level: CompatLevel): RulesetCreated {
