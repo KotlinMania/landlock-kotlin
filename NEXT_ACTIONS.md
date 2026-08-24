@@ -4,10 +4,10 @@ Based on AST analysis, here are the concrete next steps.
 
 ## Summary
 
-- **Files Present:** 10/13 (76.9%)
-- **Function parity:** 22/108 matched (target 63) — 20.4%
-- **Class/type parity:** 51/62 matched (target 82) — 82.3%
-- **Combined symbol parity:** 73/170 matched (target 145) — 42.9%
+- **Files Present:** 10/12 (83.3%)
+- **Function parity:** 22/103 matched (target 65) — 21.4%
+- **Class/type parity:** 51/60 matched (target 83) — 85.0%
+- **Combined symbol parity:** 73/163 matched (target 148) — 44.8%
 - **Average inline-code cosine:** 0.21 (function body across 9 matched files)
 - **Average documentation cosine:** 0.20 (doc text across 9 matched files)
 - **Cheat-zeroed Files:** 2
@@ -29,7 +29,7 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 1. scope
 
-- **Target:** `landlock.Scope [PROVENANCE-FALLBACK]`
+- **Target:** `landlock.Scope`
 - **Similarity:** 0.93
 - **Dependents:** 1
 - **Priority Score:** 1000200.7
@@ -37,13 +37,10 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `scope.rs` vs expected `scope.rs`
-- **Proposed provenance header:** `// port-lint: source scope.rs` (current: `// port-lint: source scope.rs`)
-- **Lint issues:** 1
 
 ### 2. ruleset
 
-- **Target:** `landlock.Ruleset [PROVENANCE-FALLBACK]`
+- **Target:** `landlock.Ruleset`
 - **Similarity:** 0.17
 - **Dependents:** 0
 - **Priority Score:** 243808.3
@@ -52,13 +49,10 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 5/8 matched (target 5)
 - **Missing types:** `PrivateRule`, `RulesetAttr`, `RulesetCreatedAttr`
 - **Tests:** 0/15 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `ruleset.rs` vs expected `ruleset.rs`
-- **Proposed provenance header:** `// port-lint: source ruleset.rs` (current: `// port-lint: source ruleset.rs`)
-- **Lint issues:** 1
 
 ### 3. compat
 
-- **Target:** `landlock.Compat [STUB] [PROVENANCE-FALLBACK]`
+- **Target:** `landlock.Compat [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 233310.0
@@ -67,13 +61,10 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 7/10 matched (target 13)
 - **Missing types:** `OptionCompatLevelMut`, `TailoredCompatLevel`, `TryCompat`
 - **Tests:** 0/10 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `compat.rs` vs expected `compat.rs`
-- **Proposed provenance header:** `// port-lint: source compat.rs` (current: `// port-lint: source compat.rs`)
-- **Lint issues:** 1
 
 ### 4. fs
 
-- **Target:** `landlock.Fs [PROVENANCE-FALLBACK]`
+- **Target:** `landlock.Fs`
 - **Similarity:** 0.19
 - **Dependents:** 0
 - **Priority Score:** 172608.1
@@ -82,13 +73,10 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 3/3 matched
 - **Missing types:** _none_
 - **Tests:** 0/7 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `fs.rs` vs expected `fs.rs`
-- **Proposed provenance header:** `// port-lint: source fs.rs` (current: `// port-lint: source fs.rs`)
-- **Lint issues:** 1
 
 ### 5. net
 
-- **Target:** `landlock.Net [PROVENANCE-FALLBACK]`
+- **Target:** `landlock.Net`
 - **Similarity:** 0.15
 - **Dependents:** 0
 - **Priority Score:** 91308.5
@@ -97,28 +85,22 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 2/2 matched
 - **Missing types:** _none_
 - **Tests:** 0/1 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `net.rs` vs expected `net.rs`
-- **Proposed provenance header:** `// port-lint: source net.rs` (current: `// port-lint: source net.rs`)
-- **Lint issues:** 1
 
 ### 6. errors
 
-- **Target:** `landlock.Errors [PROVENANCE-FALLBACK]`
+- **Target:** `landlock.Errors`
 - **Similarity:** 0.04
 - **Dependents:** 0
 - **Priority Score:** 62009.6
-- **Functions:** 1/5 matched (target 1)
+- **Functions:** 1/5 matched (target 3)
 - **Missing functions:** `ruleset_error_breaking_change`, `new`, `deref`, `_test_ruleset_errno`
-- **Types:** 13/15 matched (target 36)
+- **Types:** 13/15 matched (target 37)
 - **Missing types:** `TestRulesetError`, `Target`
 - **Tests:** 0/2 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `errors.rs` vs expected `errors.rs`
-- **Proposed provenance header:** `// port-lint: source errors.rs` (current: `// port-lint: source errors.rs`)
-- **Lint issues:** 1
 
 ### 7. access
 
-- **Target:** `landlock.Access [PROVENANCE-FALLBACK]`
+- **Target:** `landlock.Access`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 50710.0
@@ -127,13 +109,10 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 2/3 matched
 - **Missing types:** `PrivateHandledAccess`
 - **Tests:** 0/2 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `access.rs` vs expected `access.rs`
-- **Proposed provenance header:** `// port-lint: source access.rs` (current: `// port-lint: source access.rs`)
-- **Lint issues:** 1
 
 ### 8. uapi.landlock_i686
 
-- **Target:** `i686.LandlockI686 [PROVENANCE-FALLBACK]`
+- **Target:** `i686.LandlockI686`
 - **Similarity:** 0.22
 - **Dependents:** 0
 - **Priority Score:** 30907.8
@@ -142,13 +121,10 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 6/6 matched
 - **Missing types:** _none_
 - **Tests:** 0/3 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `uapi/landlock_i686.rs` vs expected `uapi/landlock_i686.rs`
-- **Proposed provenance header:** `// port-lint: source uapi/landlock_i686.rs` (current: `// port-lint: source uapi/landlock_i686.rs`)
-- **Lint issues:** 1
 
 ### 9. uapi.landlock_x86_64
 
-- **Target:** `x8664.LandlockX8664 [PROVENANCE-FALLBACK]`
+- **Target:** `x8664.LandlockX8664`
 - **Similarity:** 0.22
 - **Dependents:** 0
 - **Priority Score:** 30907.8
@@ -157,13 +133,10 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 6/6 matched
 - **Missing types:** _none_
 - **Tests:** 0/3 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `uapi/landlock_x86_64.rs` vs expected `uapi/landlock_x86_64.rs`
-- **Proposed provenance header:** `// port-lint: source uapi/landlock_x86_64.rs` (current: `// port-lint: source uapi/landlock_x86_64.rs`)
-- **Lint issues:** 1
 
 ### 10. uapi.landlock_all
 
-- **Target:** `uapi.LandlockAll [ZERO] [PROVENANCE-FALLBACK]`
+- **Target:** `uapi.LandlockAll [ZERO]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 610.0
@@ -171,11 +144,6 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing functions:** _none_
 - **Types:** 6/6 matched (target 7)
 - **Missing types:** _none_
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `uapi/landlock_all.rs` vs expected `uapi/landlock_all.rs`
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `tests:uapi/landlock_all.rs` vs expected `uapi/landlock_all.rs`
-- **Proposed provenance header:** `// port-lint: source uapi/landlock_all.rs` (current: `// port-lint: source uapi/landlock_all.rs`)
-- **Proposed provenance header:** `// port-lint: tests uapi/landlock_all.rs` (current: `// port-lint: tests uapi/landlock_all.rs`)
-- **Lint issues:** 2
 
 ## Success Criteria
 
@@ -197,6 +165,6 @@ do not treat them as the next implementation target by default.
 
 | Source | Expected target | Deps | Source path | Expected path |
 |--------|-----------------|------|-------------|---------------|
-| `lib` | `Lib` | 0 | `src/lib.rs` | `Lib.kt` |
-| `uapi.mod` | `uapi.Mod` | 0 | `src/uapi/mod.rs` | `uapi/Mod.kt` |
+| `lib` | `Lib` | 0 | `lib.rs` | `Lib.kt` |
+| `uapi.mod` | `uapi.Mod` | 0 | `uapi/mod.rs` | `uapi/Mod.kt` |
 
