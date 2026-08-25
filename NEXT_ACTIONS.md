@@ -5,9 +5,9 @@ Based on AST analysis, here are the concrete next steps.
 ## Summary
 
 - **Files Present:** 10/12 (83.3%)
-- **Function parity:** 22/103 matched (target 65) — 21.4%
-- **Class/type parity:** 51/60 matched (target 83) — 85.0%
-- **Combined symbol parity:** 73/163 matched (target 148) — 44.8%
+- **Function parity:** 22/103 matched (target 71) — 21.4%
+- **Class/type parity:** 51/60 matched (target 84) — 85.0%
+- **Combined symbol parity:** 73/163 matched (target 155) — 44.8%
 - **Average inline-code cosine:** 0.21 (function body across 9 matched files)
 - **Average documentation cosine:** 0.20 (doc text across 9 matched files)
 - **Cheat-zeroed Files:** 2
@@ -56,9 +56,9 @@ Every matched file is listed below with function and type symbol parity.
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 233310.0
-- **Functions:** 3/23 matched (target 9)
+- **Functions:** 3/23 matched (target 15)
 - **Missing functions:** `is_known`, `abi_from`, `known_abi`, `fmt`, `current`, `test_current_landlock_status`, `can_emulate`, `get_errno_from_landlock_status`, `current_kernel_abi`, `compat_state_update_1`, `compat_state_update_2`, `new`, `status`, `set_compatibility`, `set_best_effort`, `deprecated_set_best_effort`, `tailored_compat_level`, `new_path`, `try_compat_children`, `try_compat`
-- **Types:** 7/10 matched (target 13)
+- **Types:** 7/10 matched (target 14)
 - **Missing types:** `OptionCompatLevelMut`, `TailoredCompatLevel`, `TryCompat`
 - **Tests:** 0/10 matched
 
