@@ -6,10 +6,10 @@ Based on AST analysis, here are the concrete next steps.
 
 - **Files Present:** 12/12 (100.0%)
 - **Function parity:** 22/121 matched (target 89) — 18.2%
-- **Class/type parity:** 51/61 matched (target 85) — 83.6%
-- **Combined symbol parity:** 73/182 matched (target 174) — 40.1%
-- **Average inline-code cosine:** 0.21 (function body across 9 matched files)
-- **Average documentation cosine:** 0.20 (doc text across 9 matched files)
+- **Class/type parity:** 51/61 matched (target 87) — 83.6%
+- **Combined symbol parity:** 73/182 matched (target 176) — 40.1%
+- **Average inline-code cosine:** 0.19 (function body across 10 matched files)
+- **Average documentation cosine:** 0.21 (doc text across 10 matched files)
 - **Cheat-zeroed Files:** 3
 - **Critical Issues:** 11 files with <0.60 function similarity
 
@@ -76,13 +76,13 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 5. lib
 
-- **Target:** `landlock.Lib [STUB]`
+- **Target:** `landlock.Lib`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 161610.0
 - **Functions:** 0/15 matched (target 18)
 - **Missing functions:** `check_ruleset_support`, `allow_root_compat`, `too_much_access_rights_for_a_file`, `path_beneath_rules_with_too_much_access_rights_for_a_file`, `allow_root_fragile`, `ruleset_enforced`, `abi_v2_exec_refer`, `abi_v2_refer_only`, `abi_v3_truncate`, `ruleset_created_try_clone`, `abi_v4_tcp`, `abi_v5_ioctl_dev`, `abi_v6_scope_mix`, `abi_v6_scope_only`, `ruleset_created_try_clone_ownedfd`
-- **Types:** 0/1 matched
+- **Types:** 0/1 matched (target 2)
 - **Missing types:** `Sealed`
 - **Tests:** 0/15 matched
 
@@ -154,7 +154,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Priority Score:** 30310.0
 - **Functions:** 0/3 matched (target 0)
 - **Missing functions:** `landlock_create_ruleset`, `landlock_add_rule`, `landlock_restrict_self`
-- **Types:** 0/0 matched
+- **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 
 ### 12. uapi.landlock_all
