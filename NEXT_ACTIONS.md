@@ -4,14 +4,14 @@ Based on AST analysis, here are the concrete next steps.
 
 ## Summary
 
-- **Files Present:** 10/12 (83.3%)
-- **Function parity:** 22/121 matched (target 71) — 18.2%
-- **Class/type parity:** 51/61 matched (target 84) — 83.6%
-- **Combined symbol parity:** 73/182 matched (target 155) — 40.1%
+- **Files Present:** 12/12 (100.0%)
+- **Function parity:** 22/121 matched (target 89) — 18.2%
+- **Class/type parity:** 51/61 matched (target 85) — 83.6%
+- **Combined symbol parity:** 73/182 matched (target 174) — 40.1%
 - **Average inline-code cosine:** 0.21 (function body across 9 matched files)
 - **Average documentation cosine:** 0.20 (doc text across 9 matched files)
-- **Cheat-zeroed Files:** 2
-- **Critical Issues:** 9 files with <0.60 function similarity
+- **Cheat-zeroed Files:** 3
+- **Critical Issues:** 11 files with <0.60 function similarity
 
 ## Priority 1: Fix Incomplete High-Dependency Files
 
@@ -74,7 +74,19 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/7 matched
 
-### 5. net
+### 5. lib
+
+- **Target:** `landlock.Lib [STUB]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 161610.0
+- **Functions:** 0/15 matched (target 18)
+- **Missing functions:** `check_ruleset_support`, `allow_root_compat`, `too_much_access_rights_for_a_file`, `path_beneath_rules_with_too_much_access_rights_for_a_file`, `allow_root_fragile`, `ruleset_enforced`, `abi_v2_exec_refer`, `abi_v2_refer_only`, `abi_v3_truncate`, `ruleset_created_try_clone`, `abi_v4_tcp`, `abi_v5_ioctl_dev`, `abi_v6_scope_mix`, `abi_v6_scope_only`, `ruleset_created_try_clone_ownedfd`
+- **Types:** 0/1 matched
+- **Missing types:** `Sealed`
+- **Tests:** 0/15 matched
+
+### 6. net
 
 - **Target:** `landlock.Net`
 - **Similarity:** 0.15
@@ -86,7 +98,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/1 matched
 
-### 6. errors
+### 7. errors
 
 - **Target:** `landlock.Errors`
 - **Similarity:** 0.04
@@ -98,7 +110,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `TestRulesetError`, `Target`
 - **Tests:** 0/2 matched
 
-### 7. access
+### 8. access
 
 - **Target:** `landlock.Access`
 - **Similarity:** 0.00
@@ -110,7 +122,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `PrivateHandledAccess`
 - **Tests:** 0/2 matched
 
-### 8. uapi.landlock_i686
+### 9. uapi.landlock_i686
 
 - **Target:** `i686.LandlockI686`
 - **Similarity:** 0.22
@@ -122,7 +134,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/3 matched
 
-### 9. uapi.landlock_x86_64
+### 10. uapi.landlock_x86_64
 
 - **Target:** `x8664.LandlockX8664`
 - **Similarity:** 0.22
@@ -134,7 +146,18 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/3 matched
 
-### 10. uapi.landlock_all
+### 11. uapi.mod
+
+- **Target:** `uapi.Mod [STUB]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 30310.0
+- **Functions:** 0/3 matched (target 0)
+- **Missing functions:** `landlock_create_ruleset`, `landlock_add_rule`, `landlock_restrict_self`
+- **Types:** 0/0 matched
+- **Missing types:** _none_
+
+### 12. uapi.landlock_all
 
 - **Target:** `uapi.LandlockAll [ZERO]`
 - **Similarity:** 0.00
