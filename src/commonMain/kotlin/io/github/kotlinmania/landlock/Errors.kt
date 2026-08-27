@@ -1,4 +1,4 @@
-// port-lint: source landlock/src/errors.rs
+// port-lint: source errors.rs
 package io.github.kotlinmania.landlock
 
 sealed class RulesetError(

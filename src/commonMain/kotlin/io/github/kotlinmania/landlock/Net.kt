@@ -1,4 +1,4 @@
-// port-lint: source landlock/src/net.rs
+// port-lint: source net.rs
 package io.github.kotlinmania.landlock
 
 import io.github.kotlinmania.landlock.uapi.LANDLOCK_ACCESS_NET_BIND_TCP

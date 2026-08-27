@@ -4,10 +4,10 @@ Based on AST analysis, here are the concrete next steps.
 
 ## Summary
 
-- **Files Present:** 10/13 (76.9%)
-- **Function parity:** 22/126 matched (target 71) — 17.5%
-- **Class/type parity:** 51/63 matched (target 84) — 81.0%
-- **Combined symbol parity:** 73/189 matched (target 155) — 38.6%
+- **Files Present:** 10/12 (83.3%)
+- **Function parity:** 22/121 matched (target 71) — 18.2%
+- **Class/type parity:** 51/61 matched (target 84) — 83.6%
+- **Combined symbol parity:** 73/182 matched (target 155) — 40.1%
 - **Average inline-code cosine:** 0.21 (function body across 9 matched files)
 - **Average documentation cosine:** 0.20 (doc text across 9 matched files)
 - **Cheat-zeroed Files:** 2
@@ -27,7 +27,7 @@ No missing high-value files detected.
 
 Every matched file is listed below with function and type symbol parity.
 
-### 1. landlock.scope
+### 1. scope
 
 - **Target:** `landlock.Scope`
 - **Similarity:** 0.93
@@ -38,7 +38,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 2. landlock.ruleset
+### 2. ruleset
 
 - **Target:** `landlock.Ruleset`
 - **Similarity:** 0.17
@@ -50,7 +50,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `PrivateRule`, `RulesetAttr`, `RulesetCreatedAttr`
 - **Tests:** 0/15 matched
 
-### 3. landlock.compat
+### 3. compat
 
 - **Target:** `landlock.Compat [STUB]`
 - **Similarity:** 0.00
@@ -62,7 +62,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `OptionCompatLevelMut`, `TailoredCompatLevel`, `TryCompat`
 - **Tests:** 0/10 matched
 
-### 4. landlock.fs
+### 4. fs
 
 - **Target:** `landlock.Fs`
 - **Similarity:** 0.19
@@ -74,7 +74,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/7 matched
 
-### 5. landlock.net
+### 5. net
 
 - **Target:** `landlock.Net`
 - **Similarity:** 0.15
@@ -86,7 +86,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/1 matched
 
-### 6. landlock.errors
+### 6. errors
 
 - **Target:** `landlock.Errors`
 - **Similarity:** 0.04
@@ -98,7 +98,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `TestRulesetError`, `Target`
 - **Tests:** 0/2 matched
 
-### 7. landlock.access
+### 7. access
 
 - **Target:** `landlock.Access`
 - **Similarity:** 0.00
