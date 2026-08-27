@@ -4,10 +4,10 @@ Based on AST analysis, here are the concrete next steps.
 
 ## Summary
 
-- **Files Present:** 10/12 (83.3%)
-- **Function parity:** 22/103 matched (target 71) — 21.4%
-- **Class/type parity:** 51/60 matched (target 84) — 85.0%
-- **Combined symbol parity:** 73/163 matched (target 155) — 44.8%
+- **Files Present:** 10/13 (76.9%)
+- **Function parity:** 22/126 matched (target 71) — 17.5%
+- **Class/type parity:** 51/63 matched (target 84) — 81.0%
+- **Combined symbol parity:** 73/189 matched (target 155) — 38.6%
 - **Average inline-code cosine:** 0.21 (function body across 9 matched files)
 - **Average documentation cosine:** 0.20 (doc text across 9 matched files)
 - **Cheat-zeroed Files:** 2
@@ -27,7 +27,7 @@ No missing high-value files detected.
 
 Every matched file is listed below with function and type symbol parity.
 
-### 1. scope
+### 1. landlock.scope
 
 - **Target:** `landlock.Scope`
 - **Similarity:** 0.93
@@ -38,7 +38,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 2. ruleset
+### 2. landlock.ruleset
 
 - **Target:** `landlock.Ruleset`
 - **Similarity:** 0.17
@@ -50,7 +50,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `PrivateRule`, `RulesetAttr`, `RulesetCreatedAttr`
 - **Tests:** 0/15 matched
 
-### 3. compat
+### 3. landlock.compat
 
 - **Target:** `landlock.Compat [STUB]`
 - **Similarity:** 0.00
@@ -62,7 +62,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `OptionCompatLevelMut`, `TailoredCompatLevel`, `TryCompat`
 - **Tests:** 0/10 matched
 
-### 4. fs
+### 4. landlock.fs
 
 - **Target:** `landlock.Fs`
 - **Similarity:** 0.19
@@ -74,7 +74,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/7 matched
 
-### 5. net
+### 5. landlock.net
 
 - **Target:** `landlock.Net`
 - **Similarity:** 0.15
@@ -86,7 +86,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/1 matched
 
-### 6. errors
+### 6. landlock.errors
 
 - **Target:** `landlock.Errors`
 - **Similarity:** 0.04
@@ -98,7 +98,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `TestRulesetError`, `Target`
 - **Tests:** 0/2 matched
 
-### 7. access
+### 7. landlock.access
 
 - **Target:** `landlock.Access`
 - **Similarity:** 0.00
@@ -153,18 +153,4 @@ For each file to be considered "complete":
 - All tests ported
 - Documentation ported
 - port-lint header present
-
-## Reexport / Wiring Modules
-
-These files match `reexport_modules` patterns in `.ast_distance_config.json`. They are filtered out of
-normal priority and missing-file ladders because they are wiring
-modules, not direct logic ports. Consult them for call-site routing;
-do not treat them as the next implementation target by default.
-
-### Missing
-
-| Source | Expected target | Deps | Source path | Expected path |
-|--------|-----------------|------|-------------|---------------|
-| `lib` | `Lib` | 0 | `lib.rs` | `Lib.kt` |
-| `uapi.mod` | `uapi.Mod` | 0 | `uapi/mod.rs` | `uapi/Mod.kt` |
 

@@ -1,4 +1,4 @@
-// port-lint: tests lib.rs
+// port-lint: tests landlock/src/lib.rs
 package io.github.kotlinmania.landlock
 
 import kotlin.test.Test
