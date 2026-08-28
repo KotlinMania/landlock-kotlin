@@ -5,12 +5,12 @@ Based on AST analysis, here are the concrete next steps.
 ## Summary
 
 - **Files Present:** 12/12 (100.0%)
-- **Function parity:** 22/121 matched (target 89) — 18.2%
-- **Class/type parity:** 51/61 matched (target 87) — 83.6%
-- **Combined symbol parity:** 73/182 matched (target 176) — 40.1%
+- **Function parity:** 22/118 matched (target 86) — 18.6%
+- **Class/type parity:** 45/55 matched (target 79) — 81.8%
+- **Combined symbol parity:** 67/173 matched (target 165) — 38.7%
 - **Average inline-code cosine:** 0.19 (function body across 10 matched files)
 - **Average documentation cosine:** 0.21 (doc text across 10 matched files)
-- **Cheat-zeroed Files:** 3
+- **Cheat-zeroed Files:** 1
 - **Critical Issues:** 11 files with <0.60 function similarity
 
 ## Priority 1: Fix Incomplete High-Dependency Files
@@ -146,28 +146,6 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/3 matched
 
-### 11. uapi.mod
-
-- **Target:** `uapi.Mod [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 30310.0
-- **Functions:** 0/3 matched (target 0)
-- **Missing functions:** `landlock_create_ruleset`, `landlock_add_rule`, `landlock_restrict_self`
-- **Types:** 0/0 matched (target 1)
-- **Missing types:** _none_
-
-### 12. uapi.landlock_all
-
-- **Target:** `uapi.LandlockAll [ZERO]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 610.0
-- **Functions:** 0/0 matched (target 3)
-- **Missing functions:** _none_
-- **Types:** 6/6 matched (target 7)
-- **Missing types:** _none_
-
 ## Success Criteria
 
 For each file to be considered "complete":
@@ -176,4 +154,18 @@ For each file to be considered "complete":
 - All tests ported
 - Documentation ported
 - port-lint header present
+
+## Reexport / Wiring Modules
+
+These files match `reexport_modules` patterns in `.ast_distance_config.json`. They are filtered out of
+normal priority and missing-file ladders because they are wiring
+modules, not direct logic ports. Consult them for call-site routing;
+do not treat them as the next implementation target by default.
+
+### Matched
+
+| Source | Target | Path |
+|--------|--------|------|
+| `uapi.mod` | `uapi.Mod` | `uapi/mod` |
+| `uapi.landlock_all` | `uapi.LandlockAll` | `uapi/landlock_all` |
 
