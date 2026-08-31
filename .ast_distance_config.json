@@ -2,7 +2,7 @@
   "type": "maintenance",
   "name": "landlock-kotlin",
   "source": {
-    "path": "tmp/landlock/src",
+    "path": "tmp",
     "lang": "rust"
   },
   "target": {
@@ -10,10 +10,10 @@
     "lang": "kotlin"
   },
   "checks": {
-    "deep": false,
-    "missing": false,
-    "todos": false,
-    "lint": false
+    "deep": true,
+    "missing": true,
+    "todos": true,
+    "lint": true
   },
   "reexport_modules": [
     "uapi/landlock_all",
