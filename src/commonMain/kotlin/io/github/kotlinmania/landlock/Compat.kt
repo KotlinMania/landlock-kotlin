@@ -1,4 +1,4 @@
-// port-lint: source compat.rs
+// port-lint: source landlock/src/compat.rs
 package io.github.kotlinmania.landlock
 
 /**

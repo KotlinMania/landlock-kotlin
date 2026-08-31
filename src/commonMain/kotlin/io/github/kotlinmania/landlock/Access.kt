@@ -1,4 +1,4 @@
-// port-lint: source access.rs
+// port-lint: source landlock/src/access.rs
 package io.github.kotlinmania.landlock
 
 /**
