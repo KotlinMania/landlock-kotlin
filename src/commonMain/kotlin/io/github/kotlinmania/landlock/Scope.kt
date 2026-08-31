@@ -1,4 +1,4 @@
-// port-lint: source landlock/src/scope.rs
+// port-lint: source scope.rs
 package io.github.kotlinmania.landlock
 
 import io.github.kotlinmania.landlock.uapi.LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET
