@@ -19,6 +19,16 @@
     "uapi/landlock_all",
     "uapi/mod",
     "uapi.landlock_all",
-    "uapi.mod"
+    "uapi.mod",
+    "uapi/landlock_all.rs",
+    "uapi/mod.rs",
+    "landlock/src/uapi/landlock_all.rs",
+    "landlock/src/uapi/mod.rs",
+    "uapi/landlock_i686.rs",
+    "uapi/landlock_x86_64.rs",
+    "landlock/src/uapi/landlock_i686.rs",
+    "landlock/src/uapi/landlock_x86_64.rs",
+    "lib.rs",
+    "landlock/src/lib.rs"
   ]
 }
