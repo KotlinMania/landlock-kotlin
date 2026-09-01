@@ -1,4 +1,4 @@
-// port-lint: source landlock/src/uapi/mod.rs
+// port-lint: source uapi/mod.rs
 package io.github.kotlinmania.landlock.uapi
 
 /**

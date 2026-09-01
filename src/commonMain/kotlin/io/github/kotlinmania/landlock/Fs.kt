@@ -1,4 +1,4 @@
-// port-lint: source landlock/src/fs.rs
+// port-lint: source fs.rs
 package io.github.kotlinmania.landlock
 
 import io.github.kotlinmania.landlock.uapi.LANDLOCK_ACCESS_FS_EXECUTE

@@ -1,4 +1,4 @@
-// port-lint: tests landlock/src/uapi/landlock_all.rs
+// port-lint: tests uapi/landlock_all.rs
 // Verifies architecture-specific UAPI binding facts.
 package io.github.kotlinmania.landlock.uapi
 
