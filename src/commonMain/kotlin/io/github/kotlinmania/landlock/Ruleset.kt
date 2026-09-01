@@ -1,4 +1,4 @@
-// port-lint: source landlock/src/ruleset.rs
+// port-lint: source ruleset.rs
 package io.github.kotlinmania.landlock
 
 /*

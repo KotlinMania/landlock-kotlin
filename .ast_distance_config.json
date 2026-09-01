@@ -2,7 +2,7 @@
   "type": "maintenance",
   "name": "landlock-kotlin",
   "source": {
-    "path": "tmp",
+    "path": "tmp/landlock/src",
     "lang": "rust"
   },
   "target": {
