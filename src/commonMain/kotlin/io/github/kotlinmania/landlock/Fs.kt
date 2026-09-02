@@ -46,29 +46,9 @@ enum class AccessFs(
     companion object {
         val ALL: BitFlags = BitFlags.from(entries)
 
-        fun fromAll(abi: ABI): BitFlags =
-            when (abi) {
-                ABI.Unsupported -> BitFlags.empty()
-                ABI.V1 ->
-                    BitFlags.from(
-                        Execute,
-                        WriteFile,
-                        ReadFile,
-                        ReadDir,
-                        RemoveDir,
-                        RemoveFile,
-                        MakeChar,
-                        MakeDir,
-                        MakeReg,
-                        MakeSock,
-                        MakeFifo,
-                        MakeBlock,
-                        MakeSym,
-                    )
-                ABI.V2 -> fromAll(ABI.V1) or Refer
-                ABI.V3, ABI.V4 -> fromAll(ABI.V2) or Truncate
-                ABI.V5, ABI.V6 -> fromAll(ABI.V3) or IoctlDev
-            }
+        val ACCESS_FILE: BitFlags = BitFlags.from(ReadFile, WriteFile, Execute, Truncate, IoctlDev)
+
+        fun fromAll(abi: ABI): BitFlags = fromRead(abi) or fromWrite(abi)
 
         fun fromRead(abi: ABI): BitFlags =
             when (abi) {
@@ -93,17 +73,11 @@ enum class AccessFs(
                         MakeSym,
                     )
                 ABI.V2 -> fromWrite(ABI.V1) or Refer
-                ABI.V3, ABI.V4, ABI.V5, ABI.V6 -> fromWrite(ABI.V2) or Truncate
+                ABI.V3, ABI.V4 -> fromWrite(ABI.V2) or Truncate
+                ABI.V5, ABI.V6 -> fromWrite(ABI.V4) or IoctlDev
             }
 
-        fun fromFile(abi: ABI): BitFlags =
-            when (abi) {
-                ABI.Unsupported -> BitFlags.empty()
-                ABI.V1 -> BitFlags.from(Execute, WriteFile, ReadFile)
-                ABI.V2 -> fromFile(ABI.V1) or Refer
-                ABI.V3, ABI.V4 -> fromFile(ABI.V2) or Truncate
-                ABI.V5, ABI.V6 -> fromFile(ABI.V3) or IoctlDev
-            }
+        fun fromFile(abi: ABI): BitFlags = fromAll(abi) and ACCESS_FILE
     }
 }
 
