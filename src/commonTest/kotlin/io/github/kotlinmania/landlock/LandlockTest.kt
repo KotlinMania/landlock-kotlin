@@ -8,24 +8,35 @@ import kotlin.test.assertTrue
 
 class LandlockTest {
     @Test
-    fun testAbiVersions() {
-        assertEquals(0, ABI.Unsupported.value)
-        assertEquals(1, ABI.V1.value)
-        assertEquals(2, ABI.V2.value)
-        assertEquals(3, ABI.V3.value)
-        assertEquals(4, ABI.V4.value)
-        assertEquals(5, ABI.V5.value)
-        assertEquals(6, ABI.V6.value)
+    fun abiFrom() {
+        for (n in listOf(-95, -38, -1, 0)) {
+            assertEquals(ABI.Unsupported, ABI.from(n))
+        }
 
-        assertEquals(ABI.Unsupported, ABI.from(0))
-        assertEquals(ABI.V1, ABI.from(1))
-        assertEquals(ABI.V6, ABI.from(6))
-        assertEquals(ABI.V6, ABI.from(7))
+        var lastI = 1
+        var lastAbi = ABI.Unsupported
+        for ((i, abi) in ABI.entries.withIndex()) {
+            lastI = i
+            lastAbi = abi
+            assertEquals(lastAbi, ABI.from(lastI))
+        }
 
-        assertTrue(ABI.isKnown(1))
-        assertTrue(ABI.isKnown(6))
+        assertEquals(lastAbi, ABI.from(lastI + 1))
+        assertEquals(lastAbi, ABI.from(999))
+    }
+
+    @Test
+    fun knownAbi() {
+        assertFalse(ABI.isKnown(-1))
         assertFalse(ABI.isKnown(0))
-        assertFalse(ABI.isKnown(7))
+        assertFalse(ABI.isKnown(999))
+
+        var lastI = -1
+        for ((i, _) in ABI.entries.withIndex().drop(1)) {
+            lastI = i
+            assertTrue(ABI.isKnown(lastI))
+        }
+        assertFalse(ABI.isKnown(lastI + 1))
     }
 
     @Test
@@ -44,6 +55,19 @@ class LandlockTest {
 
         val diff = combined and !exec
         assertEquals(read, diff)
+    }
+
+    @Test
+    fun consistentAccessFsRw() {
+        for (abi in ABI.entries) {
+            val accessAll = AccessFs.fromAll(abi)
+            val accessRead = AccessFs.fromRead(abi)
+            val accessWrite = AccessFs.fromWrite(abi)
+            val accessFile = AccessFs.fromFile(abi)
+            assertEquals(accessRead, !accessWrite and accessAll)
+            assertEquals(accessAll, accessRead or accessWrite)
+            assertEquals(accessFile, accessAll and AccessFs.fromFile(abi))
+        }
     }
 
     @Test
@@ -155,7 +179,7 @@ class LandlockTest {
     }
 
     @Test
-    fun testNetPortConsistencyCheck() {
+    fun netPortCheckConsistency() {
         val bind = AccessNet.BindTcp
         val bindConnect = BitFlags.from(bind, AccessNet.ConnectTcp)
 
@@ -169,7 +193,38 @@ class LandlockTest {
 
         val failure = created.addRule(NetPort(1u, bindConnect))
         assertTrue(failure.isFailure)
-        assertTrue(failure.exceptionOrNull() is RulesetError.AddRules)
+        val err = failure.exceptionOrNull()
+        assertTrue(err is RulesetError.AddRules)
+        val cause = err.error
+        assertTrue(cause is AddRulesError.Net)
+        val ruleError = cause.error
+        assertTrue(ruleError is AddRuleError.UnhandledAccess)
+        assertEquals(bindConnect, ruleError.access)
+        assertEquals(BitFlags.from(AccessNet.ConnectTcp), ruleError.incompatible)
+    }
+
+    @Test
+    fun pathBeneathCheckConsistency() {
+        val roAccess = BitFlags.from(AccessFs.ReadDir, AccessFs.ReadFile)
+        val rxAccess = BitFlags.from(AccessFs.Execute, AccessFs.ReadFile)
+
+        val err =
+            Ruleset
+                .from(ABI.Unsupported)
+                .handleAccessFs(roAccess)
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .addRule(PathBeneath(PathFd("/"), rxAccess))
+                .exceptionOrNull()
+
+        assertTrue(err is RulesetError.AddRules)
+        val cause = err.error
+        assertTrue(cause is AddRulesError.Fs)
+        val ruleError = cause.error
+        assertTrue(ruleError is AddRuleError.UnhandledAccess)
+        assertEquals(rxAccess, ruleError.access)
+        assertEquals(BitFlags.from(AccessFs.Execute), ruleError.incompatible)
     }
 
     @Test
@@ -195,7 +250,7 @@ class LandlockTest {
     }
 
     @Test
-    fun testTryClone() {
+    fun rulesetCreatedTryClone() {
         val ruleset1 =
             Ruleset
                 .from(ABI.V1)
@@ -210,7 +265,7 @@ class LandlockTest {
     }
 
     @Test
-    fun testAllowRootCompat() {
+    fun allowRootCompat() {
         val abi = ABI.V1
         val status =
             Ruleset
@@ -227,7 +282,7 @@ class LandlockTest {
     }
 
     @Test
-    fun testAllowRootFragile() {
+    fun allowRootFragile() {
         val abi = ABI.V1
         val status =
             Ruleset
@@ -250,7 +305,21 @@ class LandlockTest {
     }
 
     @Test
-    fun testAbiV2ExecRefer() {
+    fun rulesetEnforced() {
+        val status =
+            Ruleset
+                .from(ABI.V1)
+                .handleAccess(AccessFs.Execute)
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+    }
+
+    @Test
+    fun abiV2ExecRefer() {
         val status =
             Ruleset
                 .from(ABI.V2)
@@ -266,7 +335,21 @@ class LandlockTest {
     }
 
     @Test
-    fun testAbiV3Truncate() {
+    fun abiV2ReferOnly() {
+        val status =
+            Ruleset
+                .from(ABI.V2)
+                .handleAccess(AccessFs.Refer)
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+    }
+
+    @Test
+    fun abiV3Truncate() {
         val status =
             Ruleset
                 .from(ABI.V3)
@@ -284,7 +367,7 @@ class LandlockTest {
     }
 
     @Test
-    fun testAbiV4Tcp() {
+    fun abiV4Tcp() {
         val status =
             Ruleset
                 .from(ABI.V4)
@@ -302,7 +385,7 @@ class LandlockTest {
     }
 
     @Test
-    fun testAbiV5IoctlDev() {
+    fun abiV5IoctlDev() {
         val status =
             Ruleset
                 .from(ABI.V5)
@@ -320,12 +403,26 @@ class LandlockTest {
     }
 
     @Test
-    fun testAbiV6ScopeMix() {
+    fun abiV6ScopeMix() {
         val status =
             Ruleset
                 .from(ABI.V6)
                 .handleAccess(AccessFs.IoctlDev)
                 .getOrThrow()
+                .scope(BitFlags.from(Scope.AbstractUnixSocket, Scope.Signal))
+                .getOrThrow()
+                .create()
+                .getOrThrow()
+                .restrictSelf()
+                .getOrThrow()
+        assertEquals(RulesetStatus.FullyEnforced, status.ruleset)
+    }
+
+    @Test
+    fun abiV6ScopeOnly() {
+        val status =
+            Ruleset
+                .from(ABI.V6)
                 .scope(BitFlags.from(Scope.AbstractUnixSocket, Scope.Signal))
                 .getOrThrow()
                 .create()
