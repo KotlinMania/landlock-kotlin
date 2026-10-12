@@ -2,7 +2,7 @@
 package io.github.kotlinmania.landlock
 
 /**
- * ABI version of the Landlock kernel subsystem.
+ * Version of the Landlock ABI.
  */
 enum class ABI(
     val value: Int,
@@ -53,9 +53,17 @@ sealed class LandlockStatus {
 
     fun toAbi(): ABI =
         when (this) {
-            is NotEnabled, is NotImplemented -> ABI.Unsupported
             is Available -> effectiveAbi
+            else -> ABI.Unsupported
         }
+
+    companion object {
+        internal val FALLBACK_STATUS: LandlockStatus = NotImplemented
+
+        fun current(): LandlockStatus = FALLBACK_STATUS
+
+        fun getErrnoFromLandlockStatus(): Int? = null
+    }
 }
 
 /**
@@ -82,7 +90,7 @@ enum class CompatState {
 /**
  * Requirement level for feature compatibility.
  */
-enum class CompatLevel {
+enum class CompatLevel : Comparable<CompatLevel> {
     BestEffort,
     SoftRequirement,
     HardRequirement,
@@ -94,34 +102,43 @@ enum class CompatLevel {
 }
 
 /**
- * Compatibility configuration and state.
+ * Internal mutable capability for types carrying an optional CompatLevel.
  */
-data class Compatibility(
-    var status: LandlockStatus = LandlockStatus.NotImplemented,
-    var level: CompatLevel? = null,
-    var state: CompatState = CompatState.Init,
-) {
-    fun update(newState: CompatState) {
-        state = state.update(newState)
-    }
+interface OptionCompatLevelMut {
+    var compatLevel: CompatLevel?
 
-    fun abi(): ABI = status.toAbi()
+    fun asOptionCompatLevelMut(): CompatLevel? = compatLevel
+}
 
-    companion object {
-        fun from(abi: ABI): Compatibility =
-            Compatibility(
-                status = if (abi == ABI.Unsupported) LandlockStatus.NotImplemented else LandlockStatus.Available(abi, abi.value),
-                level = null,
-                state = CompatState.Init,
-            )
-    }
+/**
+ * Trait providing resolution of parent and child compatibility levels.
+ */
+interface TailoredCompatLevel {
+    fun tailoredCompatLevel(parentLevel: CompatLevel): CompatLevel = parentLevel
 }
 
 /**
  * Types that support configuring Landlock compatibility requirement levels.
  */
-interface Compatible {
-    fun setCompatibility(level: CompatLevel): Compatible
+interface Compatible :
+    OptionCompatLevelMut,
+    TailoredCompatLevel {
+    fun setCompatibility(level: CompatLevel): Compatible {
+        compatLevel = level
+        return this
+    }
+
+    @Deprecated(
+        "Use setCompatibility() instead",
+        ReplaceWith("setCompatibility(if (bestEffort) CompatLevel.BestEffort else CompatLevel.HardRequirement)"),
+    )
+    fun setBestEffort(bestEffort: Boolean): Compatible =
+        setCompatibility(if (bestEffort) CompatLevel.BestEffort else CompatLevel.HardRequirement)
+
+    override fun tailoredCompatLevel(parentLevel: CompatLevel): CompatLevel {
+        val level = asOptionCompatLevelMut()
+        return if (level == null) parentLevel else maxOf(parentLevel, level)
+    }
 }
 
 /**
@@ -139,7 +156,64 @@ sealed class CompatResult {
     ) : CompatResult()
 }
 
-fun canEmulate(abi: ABI, partial: ABI, full: ABI?): Boolean {
+/**
+ * Compatibility configuration and state.
+ */
+data class Compatibility(
+    var status: LandlockStatus = LandlockStatus.NotImplemented,
+    var level: CompatLevel? = null,
+    var state: CompatState = CompatState.Init,
+) {
+    fun update(newState: CompatState) {
+        state = state.update(newState)
+    }
+
+    fun abi(): ABI = status.toAbi()
+
+    companion object {
+        fun new(): Compatibility =
+            Compatibility(
+                status = LandlockStatus.current(),
+                level = null,
+                state = CompatState.Init,
+            )
+
+        fun from(abi: ABI): Compatibility =
+            Compatibility(
+                status = if (abi == ABI.Unsupported) LandlockStatus.FALLBACK_STATUS else LandlockStatus.Available(abi, abi.value),
+                level = null,
+                state = CompatState.Init,
+            )
+
+        fun from(status: LandlockStatus): Compatibility =
+            Compatibility(
+                status = status,
+                level = null,
+                state = CompatState.Init,
+            )
+    }
+}
+
+/**
+ * Trait for types supporting runtime Landlock compatibility transformations.
+ */
+interface TryCompat<T> : TailoredCompatLevel {
+    fun tryCompatInner(abi: ABI): Result<CompatResult>
+
+    fun tryCompatChildren(
+        abi: ABI,
+        parentLevel: CompatLevel,
+        compatState: Compatibility,
+    ): Result<T?> = Result.success(null)
+
+    fun tryCompat(
+        abi: ABI,
+        parentLevel: CompatLevel,
+        compatState: Compatibility,
+    ): Result<T?>
+}
+
+fun canEmulate(abi: ABI, partial: ABI, full: ABI? = null): Boolean {
     val fullTarget = full ?: partial
     return abi.value >= partial.value || abi.value >= fullTarget.value
 }

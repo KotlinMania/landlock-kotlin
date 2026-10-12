@@ -65,6 +65,14 @@ data class Ruleset(
     var actualScoped: BitFlags = BitFlags.empty(),
     var compat: Compatibility = Compatibility(),
 ) : Compatible {
+    override var compatLevel: CompatLevel?
+        get() = compat.level
+        set(value) {
+            compat.level = value
+        }
+
+    override fun asOptionCompatLevelMut(): CompatLevel? = compat.level
+
     override fun setCompatibility(level: CompatLevel): Ruleset {
         compat.level = level
         return this
@@ -242,6 +250,14 @@ data class RulesetCreated(
     val requestedHandledFs: BitFlags get() = ruleset.requestedHandledFs
     val requestedHandledNet: BitFlags get() = ruleset.requestedHandledNet
     val compat: Compatibility get() = ruleset.compat
+
+    override var compatLevel: CompatLevel?
+        get() = ruleset.compat.level
+        set(value) {
+            ruleset.compat.level = value
+        }
+
+    override fun asOptionCompatLevelMut(): CompatLevel? = ruleset.compat.level
 
     override fun setCompatibility(level: CompatLevel): RulesetCreated {
         ruleset.compat.level = level

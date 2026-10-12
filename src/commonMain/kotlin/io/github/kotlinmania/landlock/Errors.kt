@@ -176,9 +176,28 @@ sealed class PathFdError(
     ) : PathFdError(detailMessage)
 }
 
+internal sealed class TestRulesetError(
+    message: String? = null,
+    cause: Throwable? = null,
+) : Exception(message, cause) {
+    data class Ruleset(
+        val error: RulesetError,
+    ) : TestRulesetError(error.message, error)
+
+    data class PathFd(
+        val error: PathFdError,
+    ) : TestRulesetError(error.message, error)
+
+    data class File(
+        val error: Throwable,
+    ) : TestRulesetError(error.message, error)
+}
+
 data class Errno(
     val value: Int,
 ) {
+    fun toInt(): Int = value
+
     companion object {
         const val EINVAL = 22
         const val EACCES = 13
@@ -186,6 +205,8 @@ data class Errno(
         const val ENOSYS = 38
         const val EOPNOTSUPP = 95
         const val E2BIG = 7
+
+        fun new(value: Int): Errno = Errno(value)
 
         fun from(error: Throwable): Errno =
             when (error) {

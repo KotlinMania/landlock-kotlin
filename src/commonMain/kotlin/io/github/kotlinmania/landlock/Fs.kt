@@ -24,7 +24,7 @@ import io.github.kotlinmania.landlock.uapi.LandlockPathBeneathAttr
  */
 enum class AccessFs(
     override val bits: ULong,
-) : HandledAccess {
+) : PrivateHandledAccess {
     Execute(LANDLOCK_ACCESS_FS_EXECUTE.toULong()),
     WriteFile(LANDLOCK_ACCESS_FS_WRITE_FILE.toULong()),
     ReadFile(LANDLOCK_ACCESS_FS_READ_FILE.toULong()),
@@ -43,8 +43,22 @@ enum class AccessFs(
     IoctlDev(LANDLOCK_ACCESS_FS_IOCTL_DEV.toULong()),
     ;
 
+    override fun rulesetHandleAccess(
+        ruleset: Ruleset,
+        access: BitFlags,
+    ): Result<Unit> {
+        val res = ruleset.handleAccessFs(access)
+        return if (res.isSuccess) Result.success(Unit) else Result.failure(res.exceptionOrNull()!!)
+    }
+
+    override fun intoAddRulesError(error: AddRuleError): AddRulesError = AddRulesError.Fs(error)
+
+    override fun intoHandleAccessesError(error: HandleAccessError): HandleAccessesError = HandleAccessesError.Fs(error)
+
     companion object {
         val ALL: BitFlags = BitFlags.from(entries)
+
+        fun all(): BitFlags = ALL
 
         val ACCESS_FILE: BitFlags = BitFlags.from(ReadFile, WriteFile, Execute, Truncate, IoctlDev)
 
@@ -99,12 +113,14 @@ data class PathFd(
 data class PathBeneath(
     val parent: PathFd,
     var allowedAccess: BitFlags,
-    var compatLevel: CompatLevel? = null,
+    override var compatLevel: CompatLevel? = null,
 ) : Rule<AccessFs>,
     Compatible {
     constructor(path: String, access: BitFlags) : this(PathFd(path), access)
     constructor(path: String, access: AccessFs) : this(PathFd(path), BitFlags.from(access))
     constructor(parent: PathFd, access: AccessFs) : this(parent, BitFlags.from(access))
+
+    override fun asOptionCompatLevelMut(): CompatLevel? = compatLevel
 
     override fun setCompatibility(level: CompatLevel): PathBeneath {
         this.compatLevel = level
