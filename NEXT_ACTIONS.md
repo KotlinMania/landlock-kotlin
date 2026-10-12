@@ -5,10 +5,10 @@ Based on AST analysis, here are the concrete next steps.
 ## Summary
 
 - **Files Present:** 12/12 (100.0%)
-- **Function parity:** 33/118 matched (target 92) — 28.0%
-- **Class/type parity:** 45/55 matched (target 79) — 81.8%
-- **Combined symbol parity:** 78/173 matched (target 171) — 45.1%
-- **Average inline-code cosine:** 0.25 (function body across 10 matched files)
+- **Function parity:** 54/118 matched (target 132) — 45.8%
+- **Class/type parity:** 50/55 matched (target 88) — 90.9%
+- **Combined symbol parity:** 104/173 matched (target 220) — 60.1%
+- **Average inline-code cosine:** 0.34 (function body across 10 matched files)
 - **Average documentation cosine:** 0.21 (doc text across 10 matched files)
 - **Cheat-zeroed Files:** 1
 - **Critical Issues:** 11 files with <0.60 function similarity
@@ -41,64 +41,40 @@ Every matched file is listed below with function and type symbol parity.
 ### 2. ruleset
 
 - **Target:** `landlock.Ruleset`
-- **Similarity:** 0.17
+- **Similarity:** 0.22
 - **Dependents:** 0
-- **Priority Score:** 243808.3
-- **Functions:** 9/30 matched (target 16)
-- **Missing functions:** `prctl_set_no_new_privs`, `support_no_new_privs`, `ruleset_add_rule_iter`, `default`, `new`, `as_option_compat_level_mut`, `as_mut`, `ruleset_as_mut`, `ruleset_attr`, `ruleset_created_handle_access_fs`, `ruleset_created_handle_access_net_tcp`, `ruleset_created_scope`, `ruleset_created_fs_net_scope`, `ruleset_created_ownedfd_none`, `ruleset_created_attr`, `ruleset_compat_dummy`, `ruleset_compat_partial`, `ruleset_unsupported`, `ignore_abi_v2_with_abi_v1`, `unsupported_handled_access`, `unsupported_handled_access_errno`
+- **Priority Score:** 233807.8
+- **Functions:** 10/30 matched (target 18)
+- **Missing functions:** `prctl_set_no_new_privs`, `support_no_new_privs`, `ruleset_add_rule_iter`, `default`, `new`, `as_mut`, `ruleset_as_mut`, `ruleset_attr`, `ruleset_created_handle_access_fs`, `ruleset_created_handle_access_net_tcp`, `ruleset_created_scope`, `ruleset_created_fs_net_scope`, `ruleset_created_ownedfd_none`, `ruleset_created_attr`, `ruleset_compat_dummy`, `ruleset_compat_partial`, `ruleset_unsupported`, `ignore_abi_v2_with_abi_v1`, `unsupported_handled_access`, `unsupported_handled_access_errno`
 - **Types:** 5/8 matched (target 5)
 - **Missing types:** `PrivateRule`, `RulesetAttr`, `RulesetCreatedAttr`
 - **Tests:** 0/15 matched
 
-### 3. compat
-
-- **Target:** `landlock.Compat [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 233310.0
-- **Functions:** 3/23 matched (target 15)
-- **Missing functions:** `is_known`, `abi_from`, `known_abi`, `fmt`, `current`, `test_current_landlock_status`, `can_emulate`, `get_errno_from_landlock_status`, `current_kernel_abi`, `compat_state_update_1`, `compat_state_update_2`, `new`, `status`, `set_compatibility`, `set_best_effort`, `deprecated_set_best_effort`, `tailored_compat_level`, `new_path`, `try_compat_children`, `try_compat`
-- **Types:** 7/10 matched (target 14)
-- **Missing types:** `OptionCompatLevelMut`, `TailoredCompatLevel`, `TryCompat`
-- **Tests:** 0/10 matched
-
-### 4. fs
+### 3. fs
 
 - **Target:** `landlock.Fs`
-- **Similarity:** 0.20
+- **Similarity:** 0.32
 - **Dependents:** 0
-- **Priority Score:** 172608.0
-- **Functions:** 6/23 matched (target 9)
-- **Missing functions:** `consistent_access_fs_rw`, `ruleset_handle_access`, `into_add_rules_error`, `into_handle_accesses_error`, `is_file`, `new`, `try_compat_children`, `try_compat_inner`, `path_beneath_try_compat_children`, `path_beneath_try_compat`, `as_option_compat_level_mut`, `path_beneath_compatibility`, `as_ptr`, `path_beneath_check_consistency`, `as_fd`, `path_fd`, `path_beneath_rules_iter`
+- **Priority Score:** 132606.8
+- **Functions:** 10/23 matched (target 14)
+- **Missing functions:** `consistent_access_fs_rw`, `is_file`, `new`, `try_compat_children`, `try_compat_inner`, `path_beneath_try_compat_children`, `path_beneath_try_compat`, `path_beneath_compatibility`, `as_ptr`, `path_beneath_check_consistency`, `as_fd`, `path_fd`, `path_beneath_rules_iter`
 - **Types:** 3/3 matched
 - **Missing types:** _none_
 - **Tests:** 0/7 matched
 
-### 5. net
+### 4. compat
 
-- **Target:** `landlock.Net`
-- **Similarity:** 0.15
+- **Target:** `landlock.Compat [STUB]`
+- **Similarity:** 0.00
 - **Dependents:** 0
-- **Priority Score:** 91308.5
-- **Functions:** 2/11 matched (target 4)
-- **Missing functions:** `ruleset_handle_access`, `into_add_rules_error`, `into_handle_accesses_error`, `new`, `as_ptr`, `net_port_check_consistency`, `try_compat_children`, `try_compat_inner`, `as_option_compat_level_mut`
-- **Types:** 2/2 matched
+- **Priority Score:** 123310.0
+- **Functions:** 11/23 matched (target 30)
+- **Missing functions:** `is_known`, `abi_from`, `known_abi`, `fmt`, `can_emulate`, `get_errno_from_landlock_status`, `current_kernel_abi`, `compat_state_update_1`, `compat_state_update_2`, `status`, `deprecated_set_best_effort`, `try_compat`
+- **Types:** 10/10 matched (target 17)
 - **Missing types:** _none_
-- **Tests:** 0/1 matched
+- **Tests:** 1/10 matched
 
-### 6. errors
-
-- **Target:** `landlock.Errors`
-- **Similarity:** 0.04
-- **Dependents:** 0
-- **Priority Score:** 62009.6
-- **Functions:** 1/5 matched (target 3)
-- **Missing functions:** `ruleset_error_breaking_change`, `new`, `deref`, `_test_ruleset_errno`
-- **Types:** 13/15 matched (target 37)
-- **Missing types:** `TestRulesetError`, `Target`
-- **Tests:** 0/2 matched
-
-### 7. lib
+### 5. lib
 
 - **Target:** `landlock.Lib`
 - **Similarity:** 0.52
@@ -110,19 +86,31 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `Sealed`
 - **Tests:** 11/15 matched
 
-### 8. access
+### 6. net
 
-- **Target:** `landlock.Access`
-- **Similarity:** 0.00
+- **Target:** `landlock.Net`
+- **Similarity:** 0.39
 - **Dependents:** 0
-- **Priority Score:** 50710.0
-- **Functions:** 0/4 matched (target 14)
-- **Missing functions:** `full_negation`, `bit_flags_full_negation`, `try_compat_inner`, `compat_bit_flags`
-- **Types:** 2/3 matched
-- **Missing types:** `PrivateHandledAccess`
-- **Tests:** 0/2 matched
+- **Priority Score:** 51306.1
+- **Functions:** 6/11 matched (target 9)
+- **Missing functions:** `new`, `as_ptr`, `net_port_check_consistency`, `try_compat_children`, `try_compat_inner`
+- **Types:** 2/2 matched
+- **Missing types:** _none_
+- **Tests:** 0/1 matched
 
-### 9. uapi.landlock_i686
+### 7. errors
+
+- **Target:** `landlock.Errors`
+- **Similarity:** 0.20
+- **Dependents:** 0
+- **Priority Score:** 32008.0
+- **Functions:** 3/5 matched (target 8)
+- **Missing functions:** `ruleset_error_breaking_change`, `deref`
+- **Types:** 14/15 matched (target 41)
+- **Missing types:** `Target`
+- **Tests:** 1/2 matched
+
+### 8. uapi.landlock_i686
 
 - **Target:** `i686.LandlockI686`
 - **Similarity:** 0.22
@@ -134,7 +122,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 0/3 matched
 
-### 10. uapi.landlock_x86_64
+### 9. uapi.landlock_x86_64
 
 - **Target:** `x8664.LandlockX8664`
 - **Similarity:** 0.22
@@ -145,6 +133,18 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 6/6 matched
 - **Missing types:** _none_
 - **Tests:** 0/3 matched
+
+### 10. access
+
+- **Target:** `landlock.Access`
+- **Similarity:** 0.39
+- **Dependents:** 0
+- **Priority Score:** 20706.1
+- **Functions:** 2/4 matched (target 22)
+- **Missing functions:** `bit_flags_full_negation`, `compat_bit_flags`
+- **Types:** 3/3 matched (target 5)
+- **Missing types:** _none_
+- **Tests:** 0/2 matched
 
 ## Success Criteria
 

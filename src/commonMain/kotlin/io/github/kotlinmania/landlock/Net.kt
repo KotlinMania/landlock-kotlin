@@ -10,13 +10,27 @@ import io.github.kotlinmania.landlock.uapi.LandlockNetPortAttr
  */
 enum class AccessNet(
     override val bits: ULong,
-) : HandledAccess {
+) : PrivateHandledAccess {
     BindTcp(LANDLOCK_ACCESS_NET_BIND_TCP.toULong()),
     ConnectTcp(LANDLOCK_ACCESS_NET_CONNECT_TCP.toULong()),
     ;
 
+    override fun rulesetHandleAccess(
+        ruleset: Ruleset,
+        access: BitFlags,
+    ): Result<Unit> {
+        val res = ruleset.handleAccessNet(access)
+        return if (res.isSuccess) Result.success(Unit) else Result.failure(res.exceptionOrNull()!!)
+    }
+
+    override fun intoAddRulesError(error: AddRuleError): AddRulesError = AddRulesError.Net(error)
+
+    override fun intoHandleAccessesError(error: HandleAccessError): HandleAccessesError = HandleAccessesError.Net(error)
+
     companion object {
         val ALL: BitFlags = BitFlags.from(BindTcp, ConnectTcp)
+
+        fun all(): BitFlags = ALL
 
         fun fromAll(abi: ABI): BitFlags =
             when (abi) {
@@ -32,11 +46,13 @@ enum class AccessNet(
 data class NetPort(
     val port: UShort,
     var allowedAccess: BitFlags,
-    var compatLevel: CompatLevel? = null,
+    override var compatLevel: CompatLevel? = null,
 ) : Rule<AccessNet>,
     Compatible {
     constructor(port: UShort, access: AccessNet) : this(port, BitFlags.from(access))
     constructor(port: UShort, access: BitFlags) : this(port, access, null)
+
+    override fun asOptionCompatLevelMut(): CompatLevel? = compatLevel
 
     override fun setCompatibility(level: CompatLevel): NetPort {
         this.compatLevel = level
