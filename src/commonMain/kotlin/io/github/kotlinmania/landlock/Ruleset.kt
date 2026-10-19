@@ -1,6 +1,8 @@
 // port-lint: source ruleset.rs
 package io.github.kotlinmania.landlock
 
+import io.github.kotlinmania.landlock.uapi.x8664.LandlockRuleType
+
 /*
  * Copyright (c) 2020 Mickaël Salaün
  * Copyright (c) 2025 Sydney Renee, The Solace Project
@@ -54,6 +56,41 @@ interface Rule<T : HandledAccess> {
 }
 
 /**
+ * Internal interface for Landlock rules providing rule type and pointer metadata.
+ */
+internal interface PrivateRule {
+    val typeId: LandlockRuleType
+
+    fun asPtr(): Any?
+}
+
+/**
+ * Landlock ruleset attributes builder interface.
+ */
+interface RulesetAttr : Compatible {
+    fun handleAccess(access: AccessFs): Result<Ruleset>
+
+    fun handleAccess(access: AccessNet): Result<Ruleset>
+
+    fun handleAccessFs(access: BitFlags): Result<Ruleset>
+
+    fun handleAccessNet(access: BitFlags): Result<Ruleset>
+
+    fun scope(scope: Scope): Result<Ruleset>
+
+    fun scope(scopes: BitFlags): Result<Ruleset>
+}
+
+/**
+ * Created ruleset attributes interface.
+ */
+interface RulesetCreatedAttr : Compatible {
+    fun <T : HandledAccess> addRule(rule: Rule<T>): Result<RulesetCreated>
+
+    fun <T : HandledAccess> addRules(rules: Iterable<Rule<T>>): Result<RulesetCreated>
+}
+
+/**
  * Landlock ruleset builder.
  */
 data class Ruleset(
@@ -64,7 +101,9 @@ data class Ruleset(
     var actualHandledNet: BitFlags = BitFlags.empty(),
     var actualScoped: BitFlags = BitFlags.empty(),
     var compat: Compatibility = Compatibility(),
-) : Compatible {
+) : RulesetAttr {
+    fun asMut(): Ruleset = this
+
     override var compatLevel: CompatLevel?
         get() = compat.level
         set(value) {
@@ -78,9 +117,9 @@ data class Ruleset(
         return this
     }
 
-    fun handleAccess(access: AccessFs): Result<Ruleset> = handleAccessFs(BitFlags.from(access))
+    override fun handleAccess(access: AccessFs): Result<Ruleset> = handleAccessFs(BitFlags.from(access))
 
-    fun handleAccessFs(access: BitFlags): Result<Ruleset> {
+    override fun handleAccessFs(access: BitFlags): Result<Ruleset> {
         requestedHandledFs = requestedHandledFs or access
         val supported = AccessFs.fromAll(compat.abi())
         val compatFs = access and supported
@@ -125,9 +164,9 @@ data class Ruleset(
         return Result.success(this)
     }
 
-    fun handleAccess(access: AccessNet): Result<Ruleset> = handleAccessNet(BitFlags.from(access))
+    override fun handleAccess(access: AccessNet): Result<Ruleset> = handleAccessNet(BitFlags.from(access))
 
-    fun handleAccessNet(access: BitFlags): Result<Ruleset> {
+    override fun handleAccessNet(access: BitFlags): Result<Ruleset> {
         requestedHandledNet = requestedHandledNet or access
         val supported = AccessNet.fromAll(compat.abi())
         val compatNet = access and supported
@@ -172,9 +211,9 @@ data class Ruleset(
         return Result.success(this)
     }
 
-    fun scope(scope: Scope): Result<Ruleset> = scope(BitFlags.from(scope))
+    override fun scope(scope: Scope): Result<Ruleset> = scope(BitFlags.from(scope))
 
-    fun scope(scopes: BitFlags): Result<Ruleset> {
+    override fun scope(scopes: BitFlags): Result<Ruleset> {
         requestedScoped = requestedScoped or scopes
         val supported = Scope.fromAll(compat.abi())
         val compatScopes = scopes and supported
@@ -235,6 +274,10 @@ data class Ruleset(
         }
 
     companion object {
+        fun new(): Ruleset = Ruleset()
+
+        fun default(): Ruleset = Ruleset()
+
         fun from(abi: ABI): Ruleset = Ruleset(compat = Compatibility.from(abi))
     }
 }
@@ -246,7 +289,9 @@ data class RulesetCreated(
     val ruleset: Ruleset,
     var noNewPrivs: Boolean = true,
     var fd: Int? = null,
-) : Compatible {
+) : RulesetCreatedAttr {
+    fun asMut(): RulesetCreated = this
+
     val requestedHandledFs: BitFlags get() = ruleset.requestedHandledFs
     val requestedHandledNet: BitFlags get() = ruleset.requestedHandledNet
     val compat: Compatibility get() = ruleset.compat
@@ -269,13 +314,13 @@ data class RulesetCreated(
         return this
     }
 
-    fun <T : HandledAccess> addRule(rule: Rule<T>): Result<RulesetCreated> {
+    override fun <T : HandledAccess> addRule(rule: Rule<T>): Result<RulesetCreated> {
         val check = rule.checkConsistency(this)
         if (check.isFailure) return Result.failure(check.exceptionOrNull()!!)
         return Result.success(this)
     }
 
-    fun <T : HandledAccess> addRules(rules: Iterable<Rule<T>>): Result<RulesetCreated> {
+    override fun <T : HandledAccess> addRules(rules: Iterable<Rule<T>>): Result<RulesetCreated> {
         for (rule in rules) {
             val res = addRule(rule)
             if (res.isFailure) return res

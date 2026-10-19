@@ -15,7 +15,7 @@ class CompatTest {
 
         var lastI = 0
         var lastAbi = ABI.Unsupported
-        for ((i, abi) in ABI.entries.withIndex()) {
+        for ((i, abi) in ABI.iter().asSequence().withIndex()) {
             lastI = i
             lastAbi = abi
             assertEquals(lastAbi, ABI.from(lastI))
@@ -32,8 +32,12 @@ class CompatTest {
         assertFalse(ABI.isKnown(999))
 
         var lastI = -1
-        for (i in 1..ABI.entries.lastIndex) {
-            lastI = i
+        for ((i, _) in ABI
+            .iter()
+            .asSequence()
+            .drop(1)
+            .withIndex()) {
+            lastI = i + 1
             assertTrue(ABI.isKnown(lastI))
         }
         assertFalse(ABI.isKnown(lastI + 1))
@@ -114,7 +118,6 @@ class CompatTest {
         assertEquals(RulesetStatus.PartiallyEnforced, RulesetStatus.from(CompatState.Partial))
     }
 
-    @Suppress("DEPRECATION")
     @Test
     fun testDeprecatedSetBestEffort() {
         val r1 = Ruleset()

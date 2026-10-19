@@ -23,6 +23,10 @@ enum class ABI(
         }
 
     companion object {
+        const val COUNT: Int = 7
+
+        fun iter(): Iterator<ABI> = entries.iterator()
+
         fun from(value: Int): ABI =
             when {
                 value <= 0 -> Unsupported
@@ -34,7 +38,7 @@ enum class ABI(
                 else -> V6
             }
 
-        fun isKnown(value: Int): Boolean = value in 1..6
+        fun isKnown(value: Int): Boolean = value > 0 && value < COUNT
     }
 }
 
@@ -128,10 +132,12 @@ interface Compatible :
         return this
     }
 
-    @Deprecated(
-        "Use setCompatibility() instead",
-        ReplaceWith("setCompatibility(if (bestEffort) CompatLevel.BestEffort else CompatLevel.HardRequirement)"),
-    )
+    /**
+     * Deprecated upstream: Use setCompatibility() instead.
+     *
+     * - `setBestEffort(true)` translates to `setCompatibility(CompatLevel.BestEffort)`.
+     * - `setBestEffort(false)` translates to `setCompatibility(CompatLevel.HardRequirement)`.
+     */
     fun setBestEffort(bestEffort: Boolean): Compatible =
         setCompatibility(if (bestEffort) CompatLevel.BestEffort else CompatLevel.HardRequirement)
 
@@ -217,3 +223,9 @@ fun canEmulate(abi: ABI, partial: ABI, full: ABI? = null): Boolean {
     val fullTarget = full ?: partial
     return abi.value >= partial.value || abi.value >= fullTarget.value
 }
+
+fun getErrnoFromLandlockStatus(): Int? =
+    when (LandlockStatus.current()) {
+        is LandlockStatus.NotImplemented, LandlockStatus.NotEnabled -> Errno.ENOSYS
+        is LandlockStatus.Available -> null
+    }

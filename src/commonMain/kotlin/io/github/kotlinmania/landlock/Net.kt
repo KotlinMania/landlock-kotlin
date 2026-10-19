@@ -4,13 +4,16 @@ package io.github.kotlinmania.landlock
 import io.github.kotlinmania.landlock.uapi.LANDLOCK_ACCESS_NET_BIND_TCP
 import io.github.kotlinmania.landlock.uapi.LANDLOCK_ACCESS_NET_CONNECT_TCP
 import io.github.kotlinmania.landlock.uapi.LandlockNetPortAttr
+import io.github.kotlinmania.landlock.uapi.x8664.LANDLOCK_RULE_TYPE_LANDLOCK_RULE_NET_PORT
+import io.github.kotlinmania.landlock.uapi.x8664.LandlockRuleType
 
 /**
  * Network access rights for Landlock.
  */
 enum class AccessNet(
     override val bits: ULong,
-) : PrivateHandledAccess {
+) : PrivateHandledAccess,
+    Sealed {
     BindTcp(LANDLOCK_ACCESS_NET_BIND_TCP.toULong()),
     ConnectTcp(LANDLOCK_ACCESS_NET_CONNECT_TCP.toULong()),
     ;
@@ -48,8 +51,14 @@ data class NetPort(
     var allowedAccess: BitFlags,
     override var compatLevel: CompatLevel? = null,
 ) : Rule<AccessNet>,
+    PrivateRule,
     Compatible {
+    override val typeId: LandlockRuleType get() = LANDLOCK_RULE_TYPE_LANDLOCK_RULE_NET_PORT
+
+    override fun asPtr(): Any? = toAttr()
+
     constructor(port: UShort, access: AccessNet) : this(port, BitFlags.from(access))
+
     constructor(port: UShort, access: BitFlags) : this(port, access, null)
 
     override fun asOptionCompatLevelMut(): CompatLevel? = compatLevel
