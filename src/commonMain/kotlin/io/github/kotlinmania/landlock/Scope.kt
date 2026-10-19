@@ -9,7 +9,8 @@ import io.github.kotlinmania.landlock.uapi.LANDLOCK_SCOPE_SIGNAL
  */
 enum class Scope(
     override val bits: ULong,
-) : Access {
+) : Access,
+    Sealed {
     AbstractUnixSocket(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET.toULong()),
     Signal(LANDLOCK_SCOPE_SIGNAL.toULong()),
     ;

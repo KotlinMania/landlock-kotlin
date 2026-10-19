@@ -1,10 +1,13 @@
 // port-lint: source errors.rs
 package io.github.kotlinmania.landlock
 
+import io.github.kotlinmania.thiserror.StdError
+
 sealed class RulesetError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class HandleAccesses(
         val error: HandleAccessesError,
     ) : RulesetError(error.message, error)
@@ -29,7 +32,8 @@ sealed class RulesetError(
 sealed class HandleAccessError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class Compat(
         val error: CompatError,
     ) : HandleAccessError(error.message, error)
@@ -38,7 +42,8 @@ sealed class HandleAccessError(
 sealed class ScopeError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class Compat(
         val error: CompatError,
     ) : ScopeError(error.message, error)
@@ -47,7 +52,8 @@ sealed class ScopeError(
 sealed class HandleAccessesError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class Fs(
         val error: HandleAccessError,
     ) : HandleAccessesError(error.message, error)
@@ -60,7 +66,8 @@ sealed class HandleAccessesError(
 sealed class CreateRulesetError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class CreateRulesetCall(
         val rawErrno: Int,
         val detailMessage: String = "failed to create a ruleset: errno $rawErrno",
@@ -72,7 +79,8 @@ sealed class CreateRulesetError(
 sealed class AddRuleError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class AddRuleCall(
         val rawErrno: Int,
         val detailMessage: String = "failed to add a rule: errno $rawErrno",
@@ -91,7 +99,8 @@ sealed class AddRuleError(
 sealed class AddRulesError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class Fs(
         val error: AddRuleError,
     ) : AddRulesError(error.message, error)
@@ -104,7 +113,8 @@ sealed class AddRulesError(
 sealed class CompatError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class PathBeneath(
         val error: PathBeneathError,
     ) : CompatError(error.message, error)
@@ -117,7 +127,8 @@ sealed class CompatError(
 sealed class PathBeneathError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class StatCall(
         val rawErrno: Int,
         val detailMessage: String = "failed to check file descriptor type: errno $rawErrno",
@@ -132,7 +143,8 @@ sealed class PathBeneathError(
 sealed class AccessError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data object Empty : AccessError("empty access-right")
 
     data class Unknown(
@@ -153,7 +165,8 @@ sealed class AccessError(
 sealed class RestrictSelfError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class SetNoNewPrivsCall(
         val rawErrno: Int,
         val detailMessage: String = "failed to set no_new_privs: errno $rawErrno",
@@ -168,7 +181,8 @@ sealed class RestrictSelfError(
 sealed class PathFdError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class OpenCall(
         val path: String,
         val rawErrno: Int,
@@ -179,7 +193,8 @@ sealed class PathFdError(
 internal sealed class TestRulesetError(
     message: String? = null,
     cause: Throwable? = null,
-) : Exception(message, cause) {
+) : Exception(message, cause),
+    StdError {
     data class Ruleset(
         val error: RulesetError,
     ) : TestRulesetError(error.message, error)
@@ -193,10 +208,16 @@ internal sealed class TestRulesetError(
     ) : TestRulesetError(error.message, error)
 }
 
+typealias Target = Int
+
+fun deref(target: Errno): Int = target.value
+
 data class Errno(
     val value: Int,
 ) {
     fun toInt(): Int = value
+
+    fun deref(): Int = value
 
     companion object {
         const val EINVAL = 22

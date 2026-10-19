@@ -9,6 +9,11 @@ detekt = "2.0.0-alpha.6"
 ktlint = "14.2.0"
 ktlintEngine = "1.8.0"
 kotlinxBenchmark = "0.5.0"
+anyhow = "0.1.1"
+libc = "0.1.11"
+strum = "0.2.0"
+strumMacros = "0.2.1"
+thiserror = "0.2.1"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -26,6 +31,11 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "collectionsImmutable" }
 kotlinx-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinxBenchmark" }
+anyhow-kotlin = { module = "io.github.kotlinmania:anyhow-kotlin", version.ref = "anyhow" }
+libc-kotlin = { module = "io.github.kotlinmania:libc-kotlin", version.ref = "libc" }
+strum-kotlin = { module = "io.github.kotlinmania:strum-kotlin", version.ref = "strum" }
+strum-macros-kotlin = { module = "io.github.kotlinmania:strum-macros-kotlin", version.ref = "strumMacros" }
+thiserror-kotlin = { module = "io.github.kotlinmania:thiserror-kotlin", version.ref = "thiserror" }
 
 [bundles]
 landlock-kotlin-commonMain = [
@@ -34,4 +44,10 @@ landlock-kotlin-commonMain = [
   "kotlinx-serialization-json",
   "kotlinx-datetime",
   "collections-immutable",
+  "anyhow-kotlin",
+  "libc-kotlin",
+  "strum-kotlin",
+  "strum-macros-kotlin",
+  "thiserror-kotlin",
 ]
+

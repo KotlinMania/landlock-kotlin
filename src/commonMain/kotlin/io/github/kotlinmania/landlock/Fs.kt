@@ -18,13 +18,16 @@ import io.github.kotlinmania.landlock.uapi.LANDLOCK_ACCESS_FS_REMOVE_FILE
 import io.github.kotlinmania.landlock.uapi.LANDLOCK_ACCESS_FS_TRUNCATE
 import io.github.kotlinmania.landlock.uapi.LANDLOCK_ACCESS_FS_WRITE_FILE
 import io.github.kotlinmania.landlock.uapi.LandlockPathBeneathAttr
+import io.github.kotlinmania.landlock.uapi.x8664.LANDLOCK_RULE_TYPE_LANDLOCK_RULE_PATH_BENEATH
+import io.github.kotlinmania.landlock.uapi.x8664.LandlockRuleType
 
 /**
  * File system access rights for Landlock.
  */
 enum class AccessFs(
     override val bits: ULong,
-) : PrivateHandledAccess {
+) : PrivateHandledAccess,
+    Sealed {
     Execute(LANDLOCK_ACCESS_FS_EXECUTE.toULong()),
     WriteFile(LANDLOCK_ACCESS_FS_WRITE_FILE.toULong()),
     ReadFile(LANDLOCK_ACCESS_FS_READ_FILE.toULong()),
@@ -110,13 +113,20 @@ data class PathFd(
 /**
  * Landlock rule for a file hierarchy beneath a parent path.
  */
+
 data class PathBeneath(
     val parent: PathFd,
     var allowedAccess: BitFlags,
     override var compatLevel: CompatLevel? = null,
 ) : Rule<AccessFs>,
+    PrivateRule,
     Compatible {
+    override val typeId: LandlockRuleType get() = LANDLOCK_RULE_TYPE_LANDLOCK_RULE_PATH_BENEATH
+
+    override fun asPtr(): Any? = toAttr()
+
     constructor(path: String, access: BitFlags) : this(PathFd(path), access)
+
     constructor(path: String, access: AccessFs) : this(PathFd(path), BitFlags.from(access))
     constructor(parent: PathFd, access: AccessFs) : this(parent, BitFlags.from(access))
 
